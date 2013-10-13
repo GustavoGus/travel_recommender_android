@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android" 
+  android:initialLayout="@layout/bon_voyage_widget"
+    android:minWidth="294dip"
+    android:minHeight="146dip"
+    android:label="Bon Voyage!"
+    android:updatePeriodMillis="30000">
+</appwidget-provider>

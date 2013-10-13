@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" android:background="#888888">
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:id="@+id/llayhoriz_map"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <com.google.android.maps.MapView
+                        android:id="@+id/mapview"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="0.2"
+                        android:clickable="true"
+                        android:enabled="true"
+                        android:apiKey="0_17el7MX7e0oK8TqGDP8wxHlekqfvw1bvCM44g" >
+                    </com.google.android.maps.MapView>
+
+                    <LinearLayout
+                        android:id="@+id/llayvert_buttonmap"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.8"
+                        android:gravity="center"
+                        android:orientation="vertical" >
+
+                        <ToggleButton
+                            android:id="@+id/tglbtn_hotel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/toggle_button_selector"
+                            android:onClick="hotel_OnClick"
+                            android:drawableRight="@drawable/hotel" android:textOn="" android:textOff=""/>
+
+                        <ToggleButton
+                            android:id="@+id/tglbtn_restaurant"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/toggle_button_selector"
+                            android:onClick="restaurant_OnClick"
+                            android:drawableRight="@drawable/restaurant" android:textOn="" android:textOff=""/>
+
+                        <ToggleButton
+                            android:id="@+id/tglbtn_bar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/toggle_button_selector"
+                            android:onClick="bar_OnClick"
+                            android:drawableRight="@drawable/bar" android:textOn="" android:textOff="" />
+
+                        <ToggleButton
+                            android:id="@+id/tglbtn_museum_historical"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/toggle_button_selector"
+                            android:onClick="historical_OnClick"
+                            android:drawableRight="@drawable/museum_historical" android:textOn="" android:textOff=""/>
+
+                        <ToggleButton
+                            android:id="@+id/tglbtn_transport"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/toggle_button_selector"
+                            android:onClick="transport_OnClick"
+                            android:drawableRight="@drawable/transport" android:textOn="" android:textOff="" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llayvert_buttons"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical|fill_horizontal"
+                    android:orientation="vertical" >
+
+                    <ImageView
+                        android:id="@+id/img_separation"
+                        android:layout_width="fill_parent"
+                        android:layout_height="2dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="3dp"
+                        android:background="#000000"
+                        android:fitsSystemWindows="true"
+                        android:padding="0dp"
+                        android:src="@drawable/separation_bar" />
+
+                    <Button
+                        android:id="@+id/btn_CheckIn"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/btn_default_normal"
+                        android:text="@string/Checkin" android:onClick="checkInOnClick"/>
+
+                    <LinearLayout
+                        android:id="@+id/llayhoriz_buttons"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center" >
+
+                        <Button
+                            android:id="@+id/btn_add"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="10dp"
+                            android:layout_weight="0.5"
+                            android:background="@drawable/btn_default_normal"
+                            android:text="@string/Add" 
+                            android:onClick="add_OnClick"/>
+
+                        <ToggleButton
+                            android:id="@+id/tgbtn_on"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_weight="0.5"
+                            android:background="@drawable/btn_default_normal"
+                            android:text="ToggleButton" 
+                            android:onClick="on_OnClick"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,349 @@
+/**
+ * 
+ */
+package adm.Activities;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import adm.Geolocation.Geolocation;
+import adm.Place.Place;
+import adm.Place.PlaceHierachyItem;
+import adm.Place.PlaceItem;
+import adm.Place.PlaceResponse;
+import adm.Repository.GlobalParameters;
+import adm.Search.Search;
+import adm.Search.SearchMyLocationResponse;
+import adm.Search.SearchMyLocationResult;
+import adm.Submit.SimpleResponse;
+import adm.Submit.Submit;
+import adm.Submit.SubmitResponse;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.SlidingDrawer;
+import android.widget.Toast;
+import android.widget.SlidingDrawer.OnDrawerCloseListener;
+import android.widget.SlidingDrawer.OnDrawerOpenListener;
+import android.widget.Spinner;
+
+/**
+ * @author AndroIT
+ * 
+ */
+public class AddActivity extends Activity {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.add);
+
+		// Creación de la interfaz dinámica
+		final SlidingDrawer drawer = (SlidingDrawer) findViewById(R.id.AddDetailsSligingDrawer);
+
+		drawer.setOnDrawerOpenListener(new OnDrawerOpenListener() {
+			public void onDrawerOpened() {
+
+				Button but = (Button) findViewById(R.id.Addhandle);
+				but.setBackgroundResource(R.drawable.flechadown);
+			}
+
+		});
+
+		drawer.setOnDrawerCloseListener(new OnDrawerCloseListener() {
+			public void onDrawerClosed() {
+				Button but = (Button) findViewById(R.id.Addhandle);
+				but.setBackgroundResource(R.drawable.flechaup);
+
+			}
+
+		});
+
+		final Spinner sp = (Spinner) findViewById(R.id.PlaceTypeSpinner);
+
+		String[] opciones = { "CITY", "REGION", "COUNTRY", "CONTINENT",
+				"NATURAL", "CULTURAL", "POI", "INFRASTRUCTURE", "HOTEL",
+				"RESTAURANT", "PUB", "DISCO" };
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, opciones);
+		sp.setAdapter(adapter);
+
+		final Spinner sp2 = (Spinner) findViewById(R.id.AddRateSpinner);
+
+		String[] opciones2 = { "NO", "0", "1", "2", "3", "4", "5", "6", "7",
+				"8", "9", "10" };
+		ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, opciones2);
+		sp2.setAdapter(adapter2);
+
+		final Button butDone = (Button) findViewById(R.id.DoneButton);
+		butDone.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+
+				// ArrayList<Spinner> sps = new ArrayList<Spinner> ();
+				// sps.add(sp);
+				// sps.add(sp2);
+				//
+				// ¿ES EL CONTEXTO ADECUADO??
+				AsyncTaskAdd task = new AsyncTaskAdd(getBaseContext());
+				task.execute(sp, sp2);
+
+			}
+		});
+
+		final Button butUse = (Button) findViewById(R.id.UseActualButton);
+		butUse.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+
+				// ArrayList<Spinner> sps = new ArrayList<Spinner>();
+				// sps.add(sp);
+
+				// ¿ES EL CONTEXTO ADECUADO??
+				AsyncTaskUseActual tasku = new AsyncTaskUseActual(
+						getBaseContext());
+				tasku.execute(sp);
+
+			}
+		});
+	}
+
+	private class AsyncTaskAdd extends AsyncTask<Spinner, SubmitResponse, Void> {
+
+		int flagc = 0;
+		int flaga = 0;
+		final Context context;
+		final ProgressDialog dialog;
+		private Submit submit;
+		private Geolocation geolocation;
+		String id;
+
+		public AsyncTaskAdd(Context cont) {
+			this.context = cont;
+			this.dialog = ProgressDialog.show(context,
+					context.getString(R.string.cargando),
+					context.getString(R.string.obtInfoServer), true);
+		}
+
+		@Override
+		protected Void doInBackground(Spinner... sps) {
+
+			// recogida de datos
+			final EditText ed1 = (EditText) findViewById(R.id.PlacenameText);
+			String name = ed1.getText().toString();
+
+			if (name.equals(" ")) {
+				flaga = 1;
+			}
+
+			String selectype = sps[0].getSelectedItem().toString();
+
+			if (selectype.equals(" ")) {
+				flaga = 1;
+			}
+
+			final EditText ed2 = (EditText) findViewById(R.id.PlaceParentText);
+			String parent = ed2.getText().toString();
+
+			if (parent.equals(" ")) {
+				flaga = 1;
+			}
+
+			final EditText ed3 = (EditText) findViewById(R.id.AddCommentText);
+			String comment = ed3.getText().toString();
+
+			if (comment.equals(" ")) {
+				flagc = 1;
+			}
+			String selecrate = sps[2].getSelectedItem().toString();
+
+			if (selecrate.equals("NO")) {
+				flagc = 1;
+			}
+
+			Integer rate = Integer.valueOf(selecrate);
+
+			// HCERLO PARA IMAGEN DESPUEEEEEEEES!!!!!
+
+			dialog.setCancelable(false);
+			dialog.show();
+
+			// Solicita los detalles de un lugar
+			if (flaga == 0) {
+			}
+			submit = new Submit(GlobalParameters.BASE_URL_JSON);
+			try {
+
+				// AGREGAR LA DESCRIPCION INICIAL DEL LUGAAAAAR (de momento a
+				// null)
+				if (flaga == 0) {
+
+					geolocation.myCoords(context);
+					SubmitResponse resp = submit.place(name, selectype, parent,
+							GlobalParameters.my_latitude,
+							GlobalParameters.my_longitude, null,
+							GlobalParameters.API_KEY,
+							GlobalParameters.AUTH_TOKEN);
+
+					if (resp.getResult() != null) {
+						// Envio a publicar la info
+
+						publishProgress(resp);
+					}
+				}
+
+			} catch (Exception e) {
+				Toast.makeText(getApplicationContext(), e.toString(), 3000);
+			}
+
+			try {
+
+				// AGREGAR LA DESCRIPCION INICIAL DEL LUGAAAAAR (de momento a
+				// null)
+				if (flagc == 0) {
+
+					SimpleResponse sresp = submit.comment(id, comment, rate,
+							GlobalParameters.API_KEY,
+							GlobalParameters.AUTH_TOKEN);
+
+				}
+
+			} catch (Exception e) {
+				Toast.makeText(getApplicationContext(), e.toString(), 3000);
+			}
+			return null;
+		}
+
+		@Override
+		protected void onProgressUpdate(SubmitResponse... responses) {
+			SubmitResponse resp = responses[0];
+			id = resp.getResult();
+			Toast.makeText(getApplicationContext(),
+					"Su Lugar se ha almacenado con id: " + id, 3000);
+
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			runOnUiThread(new Runnable() {
+				public void run() {
+					dialog.dismiss();
+				}
+			});
+		}
+	}
+
+	private class AsyncTaskUseActual extends
+			AsyncTask<Spinner, SubmitResponse, Void> {
+
+		final Context context;
+		final ProgressDialog dialog;
+		private Geolocation geolocation;
+		Search sr;
+		SearchMyLocationResult smlr;
+		SearchMyLocationResponse sResponse;
+		String id;
+		Place place;
+
+		public AsyncTaskUseActual(Context cont) {
+			this.context = cont;
+			this.dialog = ProgressDialog.show(context,
+					context.getString(R.string.cargando),
+					context.getString(R.string.obtInfoServer), true);
+		}
+
+		@Override
+		protected Void doInBackground(Spinner... sps) {
+			dialog.setCancelable(false);
+			dialog.show();
+
+			try {
+
+				geolocation = new Geolocation();
+				sr = new Search(GlobalParameters.BASE_URL_JSON);
+				smlr = new SearchMyLocationResult();
+				sResponse = new SearchMyLocationResponse();
+
+				// consultar donde estamos
+				geolocation.myCoords(context);
+				sResponse = sr
+						.my_location(GlobalParameters.my_latitude,
+								GlobalParameters.my_longitude,
+								GlobalParameters.API_KEY);
+
+				// Extraer respuesta
+				List<SearchMyLocationResult> result = new ArrayList<SearchMyLocationResult>();
+				result = sResponse.getResult();
+
+				Iterator<SearchMyLocationResult> it = result.iterator();
+				while (it.hasNext()) {
+
+					smlr = it.next();
+				}
+
+				id = smlr.getPlace().getId();
+
+				// buscar detalles del lugar y escribirlos en pantalla
+
+				place = new Place(GlobalParameters.BASE_URL_JSON);
+				ArrayList<Integer> ids = new ArrayList<Integer>();
+				ids.add(Integer.valueOf(id));
+				PlaceResponse resp = place
+						.detail(ids, GlobalParameters.API_KEY);
+				if (resp.getResult() != null) {
+					final EditText ed1 = (EditText) findViewById(R.id.PlacenameText);
+
+					ArrayList<PlaceItem> items = resp.getResult();
+					PlaceItem item = items.get(0);
+
+					String name = item.getName();
+					ed1.setText(name);
+
+					int position = 0;
+					String placetype = item.getPlace_Type();
+
+					for (int i = 0; i <= 11; i++) {
+						if (GlobalParameters.TAGS_BUSQUEDAS[i]
+								.equals(placetype)) {
+							position = i;
+							break;
+						}
+					}
+
+					sps[0].setSelection(position);
+
+					ArrayList<PlaceHierachyItem> hierachy = item.getHierachy();
+
+					String parents = "";
+					Iterator<PlaceHierachyItem> it2 = hierachy.iterator();
+					while (it2.hasNext()) {
+						parents += it2.next().getName();
+					}
+					final EditText ed2 = (EditText) findViewById(R.id.PlaceParentText);
+					ed2.setText(parents);
+				}
+
+			} catch (Exception e) {
+				Toast.makeText(getApplicationContext(), e.toString(), 3000);
+			}
+			return null;
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			runOnUiThread(new Runnable() {
+				public void run() {
+					dialog.dismiss();
+				}
+			});
+		}
+	}
+
+}

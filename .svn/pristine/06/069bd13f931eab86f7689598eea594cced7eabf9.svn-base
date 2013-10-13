@@ -1,0 +1,104 @@
+/**
+ * 
+ */
+package adm.Media;
+
+import android.content.Context;
+import android.media.MediaPlayer;
+import android.os.AsyncTask;
+import android.os.Vibrator;
+import android.util.Log;
+
+/**
+ * Beep sound
+ * 
+ * @author Usuario
+ * 
+ */
+public class BeepAndVibrate {
+	private String logTag = "Beep";
+	private Context theContext;
+
+	/**
+	 * Constructor
+	 * 
+	 * @param _theContext
+	 */
+	public BeepAndVibrate(Context _theContext) {
+		theContext = _theContext;
+	}
+
+	/**
+	 * Make beeps and/or vibrates in the given context and according to the
+	 * _iterations you want.
+	 * 
+	 * @param _theContext
+	 * @param _iterations
+	 * @param _vibrate
+	 * @param _beep
+	 */
+	public void makeBeepAndVibrate(int _iterations, boolean _vibrate,
+			boolean _beep) {
+		new AsyncTaskAvisos().execute(theContext, _iterations, _vibrate, _beep);
+	}
+
+	private class AsyncTaskAvisos extends AsyncTask<Object, Void, Void> {
+		@Override
+		protected void onPreExecute() {
+			Log.i(logTag, "Start AsyncTaskAvisos");
+		};
+		@Override
+		protected void onPostExecute(Void result) {
+			Log.i(logTag, "Finalice AsyncTaskAvisos");
+		};
+
+		@Override
+		protected Void doInBackground(Object... params) {
+			try {
+				// Vibrador
+				Vibrator v = (Vibrator) ((Context) params[0])
+						.getSystemService(Context.VIBRATOR_SERVICE);
+				MediaPlayer mMediaPlayer = MediaPlayer.create(
+						(Context) params[0], adm.Activities.R.raw.beep);
+
+				// Avisa params[1] veces
+				for (int i = 0; i < (Integer) params[1]; i++) {
+					// Si vibrar y sonido
+					if ((Boolean) params[2] & (Boolean) params[3]) {
+						// Start Sound
+						mMediaPlayer.start();
+						Log.i(logTag, "Sound " + mMediaPlayer.getDuration()
+								+ " milliseconds");
+						// Vibrate for sound length seconds
+						v.vibrate(1000);
+						Log.i(logTag, "Vibrate " + 1000 + " milliseconds");
+						// Wait sound duration milliseconds
+						Thread.sleep(1500);
+
+					} else {
+						// Si solo vibrar
+						if ((Boolean) params[2]) {
+							// Vibrate for sound length seconds
+							v.vibrate(1000);
+							Log.i(logTag, "Vibrate " + 1000 + " milliseconds");
+							// Wait sound duration milliseconds
+							Thread.sleep(1500);
+						} else {
+							// Si solo sonido
+							if ((Boolean) params[4]) {
+								// Start Sound
+								mMediaPlayer.start();
+								Log.i(logTag, "Sound " + " milliseconds");
+								// Wait sound duration milliseconds
+								Thread.sleep(1500);
+							}
+						}
+					}
+				}
+			} catch (Exception ex) {
+				Log.e(logTag, "AsyncTaskAviso failed: " + ex.getMessage());
+			}
+			return null;
+		}
+	}
+}

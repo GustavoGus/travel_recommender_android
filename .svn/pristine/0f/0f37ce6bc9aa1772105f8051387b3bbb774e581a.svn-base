@@ -1,0 +1,88 @@
+/**
+ * 
+ */
+package adm.Activities;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import twitter4j.Status;
+import adm.Twitter.TwitterJ;
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+
+/**
+ * @author AndroIT
+ * 
+ */
+public class RememberTabActivity extends Activity {
+	ArrayList<String> tweets = new ArrayList<String>();
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		final TwitterJ twitter = new TwitterJ(this);
+
+		// Quitar barra de arriba.
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+		// Aplicar layout
+		setContentView(R.layout.recordar);
+		Button auth = (Button) findViewById(R.id.button1);
+		
+		auth.setText("Autorizar");
+		auth.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if (!twitter.hasAccessToken())
+					twitter.authorize();
+			}
+		});
+
+		Button refresh = (Button) findViewById(R.id.button2);
+		
+		refresh.setText("Tweets");
+		refresh.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if (twitter.hasAccessToken()){
+					List<Status> statuses = twitter.getTimeLine();
+					for (Status status : statuses) {
+				        System.out.println(status.getUser().getName() + ":" +
+				                           status.getText());
+				        if (status.getText().contains("#destinia")) {
+				        	tweets.add(status.getText());
+				        }
+				    }
+					/*IDs ids = twitter.searchFriends();
+					while(ids.hasNext()){
+						getListView(twitter, ids.getNextCursor());
+					}*/
+
+				}
+					
+				 getListView();
+			}
+		});
+	}
+
+	public void getListView() {
+		ListView lv1 = (ListView) findViewById(R.id.listView1);
+		lv1.setBackgroundColor(0x88888888);
+
+		lv1.setAdapter(new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, tweets));
+
+	}
+
+}

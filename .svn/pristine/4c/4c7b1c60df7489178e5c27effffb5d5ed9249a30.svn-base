@@ -1,0 +1,79 @@
+/**
+ * 
+ */
+package adm.Place;
+
+import java.util.ArrayList;
+
+import org.osmdroid.ResourceProxy;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.ItemizedOverlay;
+import org.osmdroid.views.overlay.OverlayItem;
+
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Point;
+import android.graphics.drawable.Drawable;
+import android.view.MotionEvent;
+
+
+
+/**
+ * @author Julian
+ *
+ */
+public class DisfrutarMapPoints extends ItemizedOverlay<OverlayItem> {
+	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
+    Context mContext;
+	
+	
+	
+	/**
+	 * @param pDefaultMarker
+	 * @param pResourceProxy
+	 */
+	public DisfrutarMapPoints(Drawable pDefaultMarker,
+			ResourceProxy pResourceProxy, Context context) {
+		
+		super(pDefaultMarker, pResourceProxy);
+		
+		this.mContext = context;
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+    public void addOverlay(OverlayItem overlay) {
+	        if (!mOverlays.contains(overlay)) {
+	            mOverlays.add(overlay);
+	            populate();
+	        }
+	}
+    
+	/* (non-Javadoc)
+	 * @see org.osmdroid.views.overlay.Overlay.Snappable#onSnapToItem(int, int, android.graphics.Point, org.osmdroid.views.MapView)
+	 */
+	public boolean onSnapToItem(int arg0, int arg1, Point arg2, MapView arg3) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.osmdroid.views.overlay.ItemizedOverlay#createItem(int)
+	 */
+	@Override
+	protected OverlayItem createItem(int arg0) {
+		return this.mOverlays.get(arg0);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.osmdroid.views.overlay.ItemizedOverlay#size()
+	 */
+	@Override
+	public int size() {
+		// TODO Auto-generated method stub
+		return this.mOverlays.size();
+	}
+	
+	
+
+}

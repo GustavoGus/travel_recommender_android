@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:paddingTop="6dp" >
+
+                <EditText
+                    android:id="@+id/editTextBuscarName"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:inputType="textNoSuggestions">
+                </EditText>
+
+                <ImageButton
+                    android:id="@+id/btnBuscarName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/btn_buscar_advanced"
+                    android:contentDescription="@string/buscarName"
+                    android:focusable="true"
+                    android:gravity="center_horizontal" >
+                </ImageButton>
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_horizontal"
+            android:padding="4dp" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/textViewLocalizacion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/localizacion"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="#39302A" />
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal" >
+
+                    <Spinner
+                        android:id="@+id/spinnerLocalizacion"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" >
+                    </Spinner>
+                </LinearLayout>
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_horizontal"
+            android:padding="4dp" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/textViewTipoSitio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tipositio"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="#39302A" />
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal" >
+
+                    <ToggleButton
+                        android:id="@+id/toggleButtonCultural"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:background="@drawable/toggle_button_selector"
+                        android:checked="true"
+                        android:drawableTop="@drawable/cultural"
+                        android:ellipsize="marquee"
+                        android:textOff="Cultural"
+                        android:textOn="Cultural"
+                        android:textColor="#39302A" />
+
+                    <ToggleButton
+                        android:id="@+id/toggleButtonCiudad"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_marginLeft="15dp"
+                        android:background="@drawable/toggle_button_selector"
+                        android:checked="true"
+                        android:drawableTop="@drawable/city"
+                        android:ellipsize="marquee"
+                        android:textOff="Ciudad"
+                        android:textOn="Ciudad"
+                        android:textColor="#39302A" />
+
+                    <ToggleButton
+                        android:id="@+id/toggleButtonRegion"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_marginLeft="15dp"
+                        android:background="@drawable/toggle_button_selector"
+                        android:checked="true"
+                        android:drawableTop="@drawable/map"
+                        android:ellipsize="marquee"
+                        android:textOff="Region"
+                        android:textOn="Region"
+                        android:textColor="#39302A" />
+                </LinearLayout>
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:padding="4dp" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal" >
+
+                <ToggleButton
+                    android:id="@+id/toggleButtonHotel"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:background="@drawable/toggle_button_selector"
+                    android:checked="true"
+                    android:drawableTop="@drawable/dormir"
+                    android:ellipsize="marquee"
+                    android:textOff="Hotel"
+                    android:textOn="Hotel"
+                    android:textColor="#39302A" />
+
+                <ToggleButton
+                    android:id="@+id/toggleButtonRestaurante"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_marginLeft="15dp"
+                    android:background="@drawable/toggle_button_selector"
+                    android:checked="true"
+                    android:drawableTop="@drawable/restaurant_buscar"
+                    android:ellipsize="marquee"
+                    android:textOff="Comer"
+                    android:textOn="Comer"
+                    android:textColor="#39302A" />
+
+                <ToggleButton
+                    android:id="@+id/toggleButtonNatural"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_marginLeft="15dp"
+                    android:background="@drawable/toggle_button_selector"
+                    android:checked="true"
+                    android:drawableTop="@drawable/natural"
+                    android:ellipsize="marquee"
+                    android:textOff="Natural"
+                    android:textOn="Natural"
+                    android:textColor="#39302A" />
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_horizontal"
+            android:padding="4dp" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal" >
+
+                <ToggleButton
+                    android:id="@+id/toggleButtonPoi"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:background="@drawable/toggle_button_selector"
+                    android:checked="true"
+                    android:drawableTop="@drawable/poi"
+                    android:ellipsize="marquee"
+                    android:textOff="Punto"
+                    android:textOn="Punto"
+                    android:textColor="#39302A" />
+
+                <ToggleButton
+                    android:id="@+id/toggleButtonOcio"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_marginLeft="15dp"
+                    android:background="@drawable/toggle_button_selector"
+                    android:checked="true"
+                    android:drawableTop="@drawable/cup"
+                    android:ellipsize="marquee"
+                    android:textOff="Ocio"
+                    android:textOn="Ocio"
+                    android:textColor="#39302A" />
+
+                <ToggleButton
+                    android:id="@+id/toggleButtonInfraestructura"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_marginLeft="15dp"
+                    android:background="@drawable/toggle_button_selector"
+                    android:checked="true"
+                    android:drawableTop="@drawable/train"
+                    android:ellipsize="marquee"
+                    android:textOff="Infraestr"
+                    android:textOn="Infraestr"
+                    android:textColor="#39302A" />
+            </LinearLayout>
+        </TableRow>
+
+        <!-- <TableRow -->
+        <!-- android:layout_width="fill_parent" -->
+        <!-- android:layout_height="fill_parent" -->
+        <!-- android:gravity="center_horizontal" -->
+        <!-- android:padding="4dp" > -->
+
+
+        <!-- <LinearLayout -->
+        <!-- android:id="@+id/linearLayoutBuscarContainer" -->
+        <!-- android:layout_width="fill_parent" -->
+        <!-- android:layout_height="wrap_content" -->
+        <!-- android:gravity="center_horizontal" -->
+        <!-- android:orientation="horizontal" > -->
+
+
+        <!-- <ToggleButton -->
+        <!-- android:id="@+id/toggleButtonPais" -->
+        <!-- android:layout_width="70dp" -->
+        <!-- android:layout_height="wrap_content" -->
+        <!-- android:checked="true" -->
+        <!-- android:textOff="País" -->
+        <!-- android:textOn="País" /> -->
+
+
+        <!-- <ToggleButton -->
+        <!-- android:id="@+id/toggleButtonDisco" -->
+        <!-- android:layout_width="70dp" -->
+        <!-- android:layout_height="wrap_content" -->
+        <!-- android:checked="true" -->
+        <!-- android:textOff="Disco" -->
+        <!-- android:textOn="Disco" /> -->
+        <!-- </LinearLayout> -->
+        <!-- </TableRow> -->
+    </TableLayout>
+
+</ScrollView>

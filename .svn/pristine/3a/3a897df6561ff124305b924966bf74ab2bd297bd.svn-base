@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Bon Voyage!</string>
+    <string name="app_name">Bon Voyage!</string>
+    <string name="propertiesTitle"># Propiedades</string>
+    <string name="propertiesAlertsTit">Configurar Alertas</string>
+    <string name="propertiesAlertsSummary">Permite seleccionar los tipos de sitios de los cuales se desea recibir avisos.</string>
+    <string name="propertiesAlerts">Alertas</string>
+    <string name="propertiesAlertsConfigure">Configurar</string>
+    <string name="widgetSocial">Social</string>
+    <string name="widgetLocalize">Localiza</string>
+    <string name="buscarName">Buscar</string>
+    <string name="btnImFeelingLucky">¡Voy a tener suerte!</string>
+    <string name="btnSugerencia">¡Sugiéreme!</string>
+    <string name="suggestionTitle"># Sugerencias</string>
+    <string name="luckyTitle"># Voy a tener suerte</string>
+    <string name="searchAdTitle"># Búsqueda detallada</string>
+    <string name="AddPlace">PLACE</string>
+    <string name="Addplacename">Name:</string>
+    <string name="Addplacetype">Place Type:</string>
+    <string name="Addparentplace">Parent Place:</string>
+    <string name="Addbuttonuseactual">Use Actual</string>
+    <string name="AddDone">¡Done!</string>
+    <string name="AddComment">Comment: </string>
+    <string name="AddDetails">Add Details</string>
+    <string name="Addrate">Rate:</string>
+    <string name="AddImage">Image:</string>
+    <string name="Addadd">Add:</string>
+    <string name="AddTitle">Image Title:</string>
+    <string name="cargando">Cargando</string>
+    <string name="obtInfoServer">Obteniendo información desde el servidor</string>
+    <string name="volver">Volver</string>
+    <string name="AddDesc">Image Description:</string>
+
+</resources>

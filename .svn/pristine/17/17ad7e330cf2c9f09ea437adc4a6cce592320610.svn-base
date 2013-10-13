@@ -1,0 +1,223 @@
+package adm.widget;
+
+import java.util.ArrayList;
+
+import adm.Activities.R;
+import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProvider;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.util.Log;
+import android.widget.RemoteViews;
+
+public class BonVoyageWidget extends AppWidgetProvider{
+
+	private static final String WIDGET_PREFERENCES = "WidgetPrefs";
+	private static final String WIDGET_SOCIAL_STRING = "WidgetSocialString";
+	private static final String WIDGET_LOCALIZE_STRING = "WidgetLocalizeString";
+
+	private static int socialLength = 0;
+	private static int localizeLength = 0;
+	private static ArrayList<String> socialMessages = new ArrayList<String>();
+	private static ArrayList<String> localizeMessages = new ArrayList<String>();
+	
+	private static boolean socialTab = true;
+	private static boolean localizeTab = false;
+	
+	private static Context contextT = null;
+	private static AppWidgetManager appWidgetManagerT = null;
+	private static int appWidgetIdsT[] = null;
+	
+	public static BonVoyageWidget widget = null;
+	
+	@Override
+	public void onEnabled(Context context) {
+		super.onEnabled(context);	
+		socialLength = 0;
+		localizeLength = 0;
+	}
+
+	@Override
+	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
+			int[] appWidgetIds) {
+		if(context != null){
+			contextT = context;
+		}
+		if(appWidgetManager != null){
+			appWidgetManagerT = appWidgetManager;
+		}
+		if(appWidgetIds != null){
+			appWidgetIdsT = appWidgetIds;
+		}
+		if(widget == null){
+			widget = this;
+		}
+		
+		super.onUpdate(contextT, appWidgetManagerT, appWidgetIdsT);
+		
+	
+		
+		
+			for (int j = 0; j < appWidgetIdsT.length; j++)
+		    {
+				//ID del widget actual
+		        int widgetId = appWidgetIdsT[j];
+		        
+		    	/*Botones*/
+				Intent active = new Intent(contextT, BonVoyageWidget.class);
+				active.setAction("ActionLocalize");
+				 
+				Intent active2 = new Intent(contextT, BonVoyageWidget.class);
+				active2.setAction("ActionSocial");
+				
+				
+				 RemoteViews controles =
+				            new RemoteViews(contextT.getPackageName(), R.layout.bon_voyage_widget);
+				 PendingIntent actionPendingIntent1 = PendingIntent.getBroadcast(contextT, 0, active, 0);
+				 PendingIntent actionPendingIntent2 = PendingIntent.getBroadcast(contextT, 0, active2, 0);
+
+				 controles.setOnClickPendingIntent(R.id.Widgetbtn_localize, actionPendingIntent1);
+				 controles.setOnClickPendingIntent(R.id.Widgetbtn_social, actionPendingIntent2);
+		 
+		        //Actualizamos el widget actual 
+				 
+				 if(socialTab){
+					
+							updateSocial(contextT, appWidgetManagerT, widgetId); 
+				 }else if(localizeTab){
+					 		updateLocalize(contextT, appWidgetManagerT, widgetId);
+				 }
+		    }
+		
+		
+	}
+
+	/*public void btnWidgetLocalizeOnClick(View view){
+		localizeTab=true;
+		socialTab=false;	
+	}
+	
+	public void btnWidgetSocialOnClick(View view){
+		localizeTab=false;
+		socialTab=true;	
+	}*/
+	
+	
+	@Override
+	public void onReceive(Context context, Intent intent) {
+		// TODO Auto-generated method stub
+		final String action = intent.getAction();
+
+		Log.d("TAG_RECEIVE",action);
+
+		super.onReceive(context, intent);
+		Log.d("TAG_RECEIVE",action);
+		if (AppWidgetManager.ACTION_APPWIDGET_DELETED.equals(action)) {
+			
+				final int appWidgetId = intent.getExtras().getInt(
+						AppWidgetManager.EXTRA_APPWIDGET_ID,
+						AppWidgetManager.INVALID_APPWIDGET_ID);
+				if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+					this.onDeleted(context, new int[] { appWidgetId });
+				}
+			} else {
+		
+				
+				if (action.equals("ActionLocalize")) {
+					
+					localizeTab=true;
+					socialTab = false;
+					this.onUpdate(null, null, null);
+		
+				} else if(action.equals("ActionSocial")){
+					socialTab = true;
+					localizeTab = false;
+					this.onUpdate(null, null, null);
+		
+				}
+		}
+	}
+
+	public static void updateSocial(Context context,
+            AppWidgetManager appWidgetManager, int widgetId){
+			
+			 SharedPreferences widgetPrefs = context.getSharedPreferences(WIDGET_PREFERENCES, Context.MODE_PRIVATE);
+			 
+			 
+			 
+			 RemoteViews controles =
+			            new RemoteViews(context.getPackageName(), R.layout.bon_voyage_widget);
+			 if(socialMessages.size() < 4){
+				socialMessages.add(widgetPrefs.getString(WIDGET_SOCIAL_STRING, "ERROR"));
+				socialLength++;
+			 }else{
+					socialMessages.remove(0);
+					socialMessages.add(widgetPrefs.getString(WIDGET_SOCIAL_STRING, "ERROR"));
+			 }
+			 
+			 String msg = "";
+			 
+			 if(socialTab){
+				 
+				 for(int i = socialMessages.size()-1; i > 0 ; i--){
+						msg+=socialMessages.get(i).toString()+"\n"; 
+					 }
+					 
+					    //Actualizamos el mensaje en el control del widget
+					 controles.setTextViewText(R.id.WidgetTv_Messages, msg);
+					 
+			 }
+			    appWidgetManager.updateAppWidget(widgetId, controles);
+
+	}
+	
+	public static void updateLocalize(Context context,
+            AppWidgetManager appWidgetManager, int widgetId){
+			SharedPreferences widgetPrefs = context.getSharedPreferences(WIDGET_PREFERENCES, Context.MODE_PRIVATE);
+			 
+			 
+			 RemoteViews controles =
+			            new RemoteViews(context.getPackageName(), R.layout.bon_voyage_widget);
+	            new RemoteViews(context.getPackageName(), R.layout.bon_voyage_widget);
+			 if(localizeMessages.size() < 4){
+				 localizeMessages.add(widgetPrefs.getString(WIDGET_LOCALIZE_STRING, "ERROR"));
+			 }else{
+				 localizeMessages.add(widgetPrefs.getString(WIDGET_LOCALIZE_STRING, "ERROR"));
+				 localizeMessages.remove(0);
+			 }
+			 
+			 String msg = "";
+			 if(localizeTab){
+				 for(int i = localizeMessages.size()-1; i > 0 ; i--){
+						msg+=localizeMessages.get(i).toString()+"\n"; 
+					 }
+					 
+					    //Actualizamos el mensaje en el control del widget
+					 controles.setTextViewText(R.id.WidgetTv_Messages, msg);
+			 }
+			    appWidgetManager.updateAppWidget(widgetId, controles);
+
+		}
+		 
+		 
+	
+	
+	
+
+	
+	@Override
+	public void onDeleted(Context context, int[] appWidgetIds) {
+		// TODO Auto-generated method stub
+		super.onDeleted(context, appWidgetIds);
+	}
+
+	@Override
+	public void onDisabled(Context context) {
+		// TODO Auto-generated method stub
+		super.onDisabled(context);
+	}
+
+	
+}

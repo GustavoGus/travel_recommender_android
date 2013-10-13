@@ -1,0 +1,204 @@
+/**
+ * 
+ */
+package adm.Services;
+
+import adm.Geolocation.Geolocation;
+import adm.Repository.GlobalParameters;
+import adm.Search.Search;
+import adm.Search.SearchResponse;
+import adm.widget.BonVoyageWidget;
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.location.LocationManager;
+import android.os.AsyncTask;
+import android.os.IBinder;
+import android.util.Log;
+import android.widget.Toast;
+
+/**
+ * @author Usuario
+ * 
+ */
+public class TrackingLocalization extends Service {
+	private static final String TAG = "Tracking Localization";
+	private static final String WIDGET_PREFERENCES = "WidgetPrefs";
+	private static final String WIDGET_SOCIAL_STRING = "WidgetSocialString";
+	private static final String WIDGET_LOCALIZE_STRING = "WidgetLocalizeString";
+	private static LocationManager myLocManager = null;
+	private Task tarea;
+
+	@Override
+	public IBinder onBind(Intent intent) {
+		return null;
+	}
+
+	@Override
+	public void onCreate() {
+		Toast.makeText(this, "My Service Created", Toast.LENGTH_LONG).show();
+		Log.d(TAG, "onCreate");
+		// Creates
+		tarea = new Task();
+		// Instancia coordenadas
+		try {
+			Geolocation geo = new Geolocation();
+			myLocManager = geo.myCoords(getApplicationContext());
+		} catch (Exception e) {
+			Log.e(TAG, "Error en captura coordenadas: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public void onDestroy() {
+		Toast.makeText(this, "My Service Stopped", Toast.LENGTH_LONG).show();
+		Log.d(TAG, "onDestroy");
+		// Stops
+		tarea.cancel(true);
+	}
+
+	@Override
+	public void onStart(Intent intent, int startid) {
+		Toast.makeText(this, "My Service Started", Toast.LENGTH_LONG).show();
+		Log.d(TAG, "onStart");
+		tarea.execute(2000);
+	}
+
+	private class Task extends AsyncTask<Integer, Integer, Long> {
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			super.onProgressUpdate(values);
+		}
+
+		@Override
+		protected Long doInBackground(Integer... args) {
+			Log.i(TAG, "AsyncTask Running");
+			int n = 0;
+			// Para las coordenadas
+			double coorLat = 0.0;
+			double coorLon = 0.0;
+			// Para las busquedas
+			Search busqueda;
+			SearchResponse busquedaResponse;
+			// Para preferencias
+			final SharedPreferences preferencias;
+			boolean pref_tipoSitios[] = new boolean[12];
+			boolean pref_vibrar = true;
+			boolean pref_beep = true;
+
+			// ---------------------------------------//
+			// Obtengo preferencias
+			try {
+				preferencias = getSharedPreferences("propertiesAlerts",
+						Context.MODE_PRIVATE);
+
+				// CITY|REGION|COUNTRY|CONTINENT|NATURAL|CULTURAL|POI|INFRASTRUCTURE|HOTEL|RESTAURANT|PUB|DISCO
+
+				pref_tipoSitios[0] = preferencias.getBoolean("CITY", false);
+				pref_tipoSitios[1] = preferencias.getBoolean("REGION", false);
+				pref_tipoSitios[2] = preferencias.getBoolean("COUNTRY", false);
+				pref_tipoSitios[3] = preferencias
+						.getBoolean("CONTINENT", false);
+				pref_tipoSitios[4] = preferencias.getBoolean("NATURAL", false);
+				pref_tipoSitios[5] = preferencias.getBoolean("CULTURAL", false);
+				pref_tipoSitios[6] = preferencias.getBoolean("POI", false);
+				pref_tipoSitios[7] = preferencias.getBoolean("INFRASTRUCTURE",
+						false);
+				pref_tipoSitios[8] = preferencias.getBoolean("HOTEL", false);
+				pref_tipoSitios[9] = preferencias.getBoolean("RESTAURANT",
+						false);
+				pref_tipoSitios[10] = preferencias.getBoolean("PUB", false);
+				pref_tipoSitios[11] = preferencias.getBoolean("DISCO", false);
+
+				pref_vibrar = preferencias.getBoolean("BEEP", true);
+				pref_beep = preferencias.getBoolean("VIBRAR", true);
+			} catch (Exception e) {
+				Log.e(TAG, "Al obtener preferencias: " + e.getMessage());
+			}
+
+			// ---------------------------------------//
+			// Bucle de tracking
+			while (!isCancelled()) {
+				try {
+					// ---------------------------------------//
+					// Obtengo las coordenadas. Si coordenadas distintas busco
+					// sitio
+					if (GlobalParameters.my_latitude != coorLat
+							|| GlobalParameters.my_longitude != coorLon) {
+						coorLat = GlobalParameters.my_latitude;
+						coorLon = GlobalParameters.my_longitude;
+
+						// ---------------------------------------//
+						// Busco informacion alrededor mio
+						busqueda = new Search(GlobalParameters.BASE_URL_JSON);
+						busquedaResponse = busqueda
+								.location(
+										coorLat,
+										coorLon,
+										GlobalParameters.API_KEY,
+										"CITY|REGION|COUNTRY|CONTINENT|NATURAL|CULTURAL|POI|INFRASTRUCTURE|HOTEL|RESTAURANT|PUB|DISCO",
+										"");
+
+						// ---------------------------------------//
+						// Si encuentro algo, actualizo el Widget
+						if (busquedaResponse != null) {
+							updateWidget(Double.toString(coorLat),
+									Double.toString(coorLon), busquedaResponse
+											.getResult().toString());
+							// ---------------------------------------//
+							// Si el usuario tiene en preferencias activados los
+							// avisos o vibracion. Procedo a realizar el aviso.
+							if (pref_vibrar && pref_beep) {
+							} else {
+								if (pref_beep) {
+								} else {
+									if (pref_vibrar) {
+									}
+								}
+							}
+
+						}// Si encuentro algo
+					}// Si coordenadas distintas
+
+					// ---------------------------------------//
+					// Sleep el tiempo que el usuario desea
+					Thread.sleep(args[0]);
+
+				} catch (Exception e) {
+					Log.e(TAG, e.getMessage());
+				}
+				Log.i(TAG, "AsyncTask Running " + n);
+				n++;
+			}
+			return null;
+		}
+	}
+	public void updateWidget(String... str) {
+		BonVoyageWidget widget = BonVoyageWidget.widget;
+		try {
+			SharedPreferences preferences = getApplicationContext()
+					.getSharedPreferences(WIDGET_PREFERENCES,
+							Context.MODE_PRIVATE);
+
+			Editor edit = preferences.edit();
+			edit.putString(WIDGET_LOCALIZE_STRING, "Testing Localize lat: "
+					+ str[0] + " long: " + str[1]);
+			edit.commit();
+			widget.onUpdate(null, null, null);
+			Log.d("TAG_UPDATED_BON_VOYAGE", "UPDATED_LOCALIZED");
+
+			edit.putString(WIDGET_SOCIAL_STRING, "Social: " + str[2]);
+			edit.commit();
+			widget.onUpdate(null, null, null);
+			Log.d("TAG_UPDATED_BON_VOYAGE", "UPDATED_SOCIAL");
+
+		} catch (NullPointerException e) {
+			Log.d("BON_VOYAGE", "No widget");
+		} catch (Exception e) {
+			Log.d("BON_VOYAGE", "Widget Error");
+		}
+	}
+}

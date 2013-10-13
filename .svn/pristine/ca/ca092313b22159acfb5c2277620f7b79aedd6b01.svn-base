@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="array_alertas">
+        <item>Cities</item>
+        <item>Natural landscape</item>
+        <item>Cultural place</item>
+        <item>Place of interest</item>
+        <item>Infraestructures</item>
+        <item>Hotels</item>
+        <item>Restaurants</item>
+    </string-array>
+    <string-array name="array_localizacion_buscar_name_labels">
+        <item>City</item>
+        <item>Region</item>
+    </string-array>
+    <string-array name="array_localizacion_buscar_name_values">
+        <item>CITY</item>
+        <item>REGION</item>
+    </string-array>
+</resources>

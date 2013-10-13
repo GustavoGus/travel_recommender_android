@@ -1,0 +1,130 @@
+/**
+ * 
+ */
+package adm.Activities;
+
+import adm.Repository.GlobalParameters;
+import adm.User.User;
+import adm.User.UserRegisterResponse;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class UserRegisterActivity extends Activity {
+	UserRegisterResponse register;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		final User user = new User(GlobalParameters.BASE_URL_JSON, this);
+
+		super.onCreate(savedInstanceState);
+
+		// Quitar barra de arriba.
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+		// Aplicar layout
+		setContentView(R.layout.register);
+
+		Button register = (Button) findViewById(R.id.buttonRegister);
+		final EditText eUser = (EditText) findViewById(R.id.editTextrUser);
+		final EditText pass = (EditText) findViewById(R.id.editTextrPass);
+		final EditText name = (EditText) findViewById(R.id.editTextName);
+		final EditText email = (EditText) findViewById(R.id.editTextEmail);
+
+		register.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				String sUser = eUser.getText().toString();
+				String sPass = pass.getText().toString();
+				String sName = name.getText().toString();
+				String sEmail = email.getText().toString();
+
+				if (!sUser.equals("") && !sPass.equals("") && !sName.equals("")
+						&& !sEmail.equals("")) {
+					//AsyncTaskRegister task = new AsyncTaskRegister(getParent(), sUser, sPass, sName, sEmail, user);
+					AsyncTaskRegister task = new AsyncTaskRegister(UserRegisterActivity.this, sUser, sPass, sName, sEmail, user);
+					task.execute();
+						
+				} else
+					Toast.makeText(UserRegisterActivity.this,
+							getResources().getString(R.string.EmptyField),
+							Toast.LENGTH_LONG).show();
+			}
+
+		});
+
+	}
+	
+	public class AsyncTaskRegister extends AsyncTask<Void, Void, Integer> {
+
+		final ProgressDialog dialog;
+		final String sUser;
+		final String pass;
+		final String name;
+		final String email;
+		final User user;
+		private Context context;
+
+		public AsyncTaskRegister(Context context, String sUser, String pass, String name, String email,
+				User user) {
+			this.sUser = sUser;
+			this.pass = pass;
+			this.name = name;
+			this.email = email;
+			this.user = user;
+			this.context = context;
+			this.dialog = ProgressDialog.show(context,
+					context.getString(R.string.cargando), context
+							.getString(R.string.sending), true);	
+		}
+
+		@Override
+		protected Integer doInBackground(Void... params) {
+			dialog.setCancelable(false);
+			dialog.show();
+			
+			register = user.register(email, sUser, pass, name, GlobalParameters.API_KEY);
+
+			if (register != null) {
+				if (register.getStatus() != 0)
+					return 0;
+				else
+					return 1;
+			} else
+				return 2;
+		}
+
+		protected void onPostExecute(Integer result) {
+			dialog.dismiss();
+			if (result == 0)
+				Toast.makeText(context, register.getMessage(),
+						Toast.LENGTH_LONG).show();
+			else if (result == 1) {
+				Toast.makeText(context,
+						context.getResources().getString(R.string.regSuc),
+						Toast.LENGTH_LONG).show();
+				UserRegisterActivity.this.finish();
+			} else if (result == 2) {
+				Toast.makeText(context,
+						context.getResources().getString(R.string.failCon),
+						Toast.LENGTH_LONG).show();
+			}
+
+		}
+
+	}
+
+}
+
+

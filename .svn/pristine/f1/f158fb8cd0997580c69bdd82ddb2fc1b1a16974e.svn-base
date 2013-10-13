@@ -1,0 +1,6 @@
+BEGIN TRANSACTION;
+CREATE TABLE User (User_Id INTEGER PRIMARY KEY, Username TEXT, Password Text);
+CREATE TABLE Search (Search_Id INTEGER PRIMARY KEY, User_Id INTEGER, Search_Type TEXT, Searching_Word TEXT);
+CREATE TABLE SearchIds(Search_Id INTEGER PRIMARY KEY, User_Id INTEGER, id_item INTEGER, place_type TEXT );
+CREATE TABLE CoordsInfo(Coords_Id INTEGER PRIMARY KEY, User_Id INTEGER, Longitude REAL, Latitude REAL, Description TEXT);
+COMMIT;

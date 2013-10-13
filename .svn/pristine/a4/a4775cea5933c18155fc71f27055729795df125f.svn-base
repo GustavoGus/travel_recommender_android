@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical" >
+
+    <TableLayout
+        android:id="@+id/tableLayoutProperties"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_horizontal"
+            android:paddingTop="6dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="6dp">
+
+            <EditText
+                android:id="@+id/editTextBuscarName"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+            </EditText>
+
+            <Button
+                android:id="@+id/btnBuscarName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/buscarName" 
+                android:focusable="true"
+                android:background="@drawable/btn_default_normal">
+            </Button>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_horizontal"
+            android:padding="4dp" >
+
+            <LinearLayout
+                android:id="@+id/linearLayout123"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/textView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Localización"
+                    android:textColor="#39302A"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <LinearLayout
+                    android:id="@+id/linearLayoutBuscarContainer"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal" >
+
+                    <Spinner
+                        android:id="@+id/spinnerLocalizacion"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/array_localizacion_buscar_name_labels"
+                        android:prompt="@string/app_name" >
+                    </Spinner>
+                </LinearLayout>
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_horizontal"
+            android:padding="4dp" >
+
+            <LinearLayout
+                android:id="@+id/linearLayout124"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#39302A"
+                    android:text="Tipo de sitio"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <LinearLayout
+                    android:id="@+id/linearLayoutBuscarContainer"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal" >
+
+                    <ToggleButton
+                        android:id="@+id/toggleButtonCiudad"
+                        android:layout_width="130dp"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:textOff="Ciudad"
+                        android:textOn="Ciudad" />
+
+                    <ToggleButton
+                        android:id="@+id/toggleButtonRegion"
+                        android:layout_width="130dp"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:textOff="Region"
+                        android:textOn="Region" />
+                </LinearLayout>
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_horizontal"
+            android:padding="4dp" >
+
+            <LinearLayout
+                android:id="@+id/linearLayoutBuscarContainer"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal" >
+
+                <ToggleButton
+                    android:id="@+id/toggleButtonRestaurante"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:textOff="Restaurante"
+                    android:textOn="Restaurante" />
+
+                <ToggleButton
+                    android:id="@+id/toggleButtonNatural"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:textOff="Natural"
+                    android:textOn="Natural" />
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_horizontal"
+            android:padding="4dp" >
+
+            <LinearLayout
+                android:id="@+id/linearLayoutBuscarContainer"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal" >
+
+                <ToggleButton
+                    android:id="@+id/toggleButtonCultural"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:textOff="Cultural"
+                    android:textOn="Cultural" />
+
+                <ToggleButton
+                    android:id="@+id/toggleButtonPoi"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:textOff="P. Interés"
+                    android:textOn="P. Interés" />
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_horizontal"
+            android:padding="4dp" >
+
+            <LinearLayout
+                android:id="@+id/linearLayoutBuscarContainer"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal" >
+
+                <ToggleButton
+                    android:id="@+id/toggleButtonInfraestructura"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:textOff="Infraestructura"
+                    android:textOn="Infraestructura" />
+
+                <ToggleButton
+                    android:id="@+id/toggleButtonHotel"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:textOff="Hotel"
+                    android:textOn="Hotel" />
+            </LinearLayout>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_horizontal"
+            android:padding="4dp" >
+
+            <LinearLayout
+                android:id="@+id/linearLayoutBuscarContainer"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal" >
+
+                <ToggleButton
+                    android:id="@+id/toggleButtonPais"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:textOff="País"
+                    android:textOn="País" />
+
+                <ToggleButton
+                    android:id="@+id/toggleButtonPub"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:textOff="Pub"
+                    android:textOn="Pub" />
+
+                <ToggleButton
+                    android:id="@+id/toggleButtonDisco"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:textOff="Disco"
+                    android:textOn="Disco" />
+            </LinearLayout>
+        </TableRow>
+    </TableLayout>
+
+</ScrollView>

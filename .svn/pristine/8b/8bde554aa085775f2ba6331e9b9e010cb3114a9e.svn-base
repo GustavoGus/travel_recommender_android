@@ -1,0 +1,57 @@
+package adm.Image;
+
+import java.util.ArrayList;
+
+public class ImageResponse {
+	private int status;
+	private Pics result;
+	
+	/*
+	 * Getters and Setters
+	 */
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	public Pics getResult() {
+		return result;
+	}
+	public void setResult(Pics result) {
+		this.result = result;
+	}
+	
+	/*
+	 * Constructor
+	 */
+	public ImageResponse(int status, Pics result) {
+		super();
+		this.status = status;
+		this.result = result;
+	}
+	
+	/*
+	 * Metodos de la lista pics
+	 */
+	/*public boolean add(ImageItem object) {
+		return pics.add(object);
+	}
+	public void clear() {
+		pics.clear();
+	}
+	public boolean contains(Object object) {
+		return pics.contains(object);
+	}
+	public boolean isEmpty() {
+		return pics.isEmpty();
+	}
+	public boolean remove(Object object) {
+		return pics.remove(object);
+	}
+	public int size() {
+		return pics.size();
+	}*/
+	
+	
+}

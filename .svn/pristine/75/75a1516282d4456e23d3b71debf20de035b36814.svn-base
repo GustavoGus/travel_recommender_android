@@ -1,0 +1,86 @@
+package adm.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import adm.Search.Search;
+import adm.Search.SearchResponse;
+import android.content.Context;
+import android.util.Log;
+
+/**
+ * @author Usuario Clase que encapsula la entidad Sugerencia. Para la sugerencia
+ *         he decidido partir de informacion sobre las busquedas anteriores.
+ *         Luego buscar sitios similares.
+ */
+public class Suggestion {
+	// Private variables
+	private String logTag = "Suggestion";
+	private SearchResponse sResponse;
+
+	/**
+	 * 
+	 */
+	public Suggestion() {
+		sResponse = new SearchResponse();
+	};
+
+	/**
+	 * 
+	 */
+	public void execute(Context context) throws Exception {
+		Log.d(logTag, "Execute");
+
+		DataBaseManagement database = new DataBaseManagement(context);
+
+		// Este m todo crea la base de datos si no existe ya. Si ya existe no es
+		// necesario llamarlo.
+		database.CreateDB();
+
+		// Obtain from the old database searches.
+		// Waiting identifiers of the sites.
+		List<SearchClass> lista = new ArrayList<SearchClass>();
+		for (String tags : GlobalParameters.TAGS_BUSQUEDAS) {
+			lista.addAll(database.getSearchBySearchType("juanito", tags));
+		}
+
+		// Create searchRespone to be joining in the loop response.
+		SearchResponse sResponseAux = new SearchResponse();
+
+		// Instance my object Search with a URL
+		Search s = new Search(GlobalParameters.BASE_URL_JSON);
+
+		// Solo buscaré relacionados de 3 busquedas anteriores. No quiero
+		// sobrecargar el sistema
+		int indiceVisitar = 0;
+		Random rnd = new Random();
+		rnd.setSeed(System.currentTimeMillis());
+
+		List<Integer> indicesVisitados = new ArrayList<Integer>();
+
+		for (int i = 0; i < 3 && lista.size() > 0; i++) {
+			
+			indiceVisitar = rnd.nextInt(lista.size());
+			// Aleatorio dentro del rango numero resultados
+			while (indicesVisitados.contains(indiceVisitar)) {
+				indiceVisitar = rnd.nextInt(lista.size());
+			}
+
+			sResponseAux = s.related(lista.get(indiceVisitar)
+					.getSearchingWord(), GlobalParameters.API_KEY,
+					lista.get(indiceVisitar).getSearchType(), "");
+			// Join results
+			if (sResponseAux.getStatus() == 0) {
+				sResponse.addAll(sResponseAux.getResult());
+			}
+		}
+	}
+
+	/**
+	 * @return
+	 */
+	public SearchResponse getResponse() {
+		return sResponse;
+	}
+}

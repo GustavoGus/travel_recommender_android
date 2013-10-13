@@ -1,0 +1,118 @@
+/**
+ * 
+ */
+package adm.Activities;
+import adm.Repository.GlobalParameters;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.os.Bundle;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+
+/**
+ * @author AndroIT
+ * 
+ */
+public class PropertiesActivity extends Activity {
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		// Quitar barra de arriba.
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		// Aplicar layout
+		setContentView(R.layout.properties);
+
+		// Asignar a boton el dialog
+		final Button botonAlerts = (Button) findViewById(R.id.btnAlerts);
+		botonAlerts.setOnClickListener(new View.OnClickListener() {
+
+			public void onClick(View arg0) {
+				showDialog(GlobalParameters.COD_DIALOG_ALERTS);
+
+			}
+
+		});
+	}
+
+	@Override
+	protected Dialog onCreateDialog(final int id) {
+		AlertDialog.Builder builder = null;
+		switch (id) {
+			case GlobalParameters.COD_DIALOG_ALERTS :
+				final boolean[] opcionesFin = new boolean[7];
+				boolean[] opcionesIni = new boolean[7];
+
+				// Restaurar si estan en SharedPrefences
+				opcionesIni = loadSharedPreferencesAlerts();
+				builder = new AlertDialog.Builder(this);
+				builder.setTitle(getResources().getString(
+						R.string.propertiesAlertsTit));
+				builder.setMultiChoiceItems(R.array.array_alertas, opcionesIni,
+						new DialogInterface.OnMultiChoiceClickListener() {
+
+							public void onClick(DialogInterface arg0, int arg1,
+									boolean arg2) {
+								opcionesFin[arg1] = arg2;
+							}
+						});
+				builder.setPositiveButton("OK",
+						new DialogInterface.OnClickListener() {
+
+							public void onClick(DialogInterface dialog, int arg1) {
+								// Recuperar respuestas y guardar
+								storeSharedPreferencesAlerts(opcionesFin);
+								dialog.cancel();
+							}
+						});
+
+				builder.setNegativeButton("Cancelar",
+						new DialogInterface.OnClickListener() {
+
+							public void onClick(DialogInterface dialog,
+									int which) {
+								dialog.cancel();
+							}
+						});
+				break;
+		}
+		return builder.create();
+	}
+
+	private boolean[] loadSharedPreferencesAlerts() {
+		final SharedPreferences preferencias = getSharedPreferences(
+				"propertiesAlerts", Context.MODE_PRIVATE);
+		final boolean res[] = new boolean[7];
+		res[0] = preferencias.getBoolean("Ciudades", false);
+		res[1] = preferencias.getBoolean("Territorio natural", false);
+		res[2] = preferencias.getBoolean("Punto cultural", false);
+		res[3] = preferencias.getBoolean("Punto de interes", false);
+		res[4] = preferencias.getBoolean("Infraestructuras", false);
+		res[5] = preferencias.getBoolean("Hoteles", false);
+		res[6] = preferencias.getBoolean("Restaurantes", false);
+		return res;
+	}
+
+	private void storeSharedPreferencesAlerts(final boolean[] respuestas) {
+		final SharedPreferences preferencias = getSharedPreferences(
+				"propertiesAlerts", Context.MODE_PRIVATE);
+		final Editor ed = preferencias.edit();
+		ed.putBoolean("Ciudades", respuestas[0]);
+		ed.putBoolean("Territorio natural", respuestas[1]);
+		ed.putBoolean("Punto cultural", respuestas[2]);
+		ed.putBoolean("Punto de interes", respuestas[3]);
+		ed.putBoolean("Infraestructuras", respuestas[4]);
+		ed.putBoolean("Hoteles", respuestas[5]);
+		ed.putBoolean("Restaurantes", respuestas[6]);
+		ed.commit();
+	}
+
+}

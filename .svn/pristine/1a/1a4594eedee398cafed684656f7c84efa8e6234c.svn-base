@@ -1,0 +1,200 @@
+/**
+ * 
+ */
+package adm.Activities;
+
+import java.util.Date;
+
+import adm.Repository.GlobalParameters;
+import adm.Submit.SimpleResponse;
+import adm.Submit.Submit;
+import adm.Twitter.TwitterJ;
+import adm.User.User;
+import adm.User.UserLoginResponse;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
+/**
+ * @author AndroIT
+ * 
+ */
+public class NewComment extends Activity {
+	private int idPlace;
+	private String placeName;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		setContentView(R.layout.newcomment);
+
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			idPlace = extras.getInt("idPlace");
+			placeName = extras.getString("placeName");
+		} else {
+			this.finish();
+		}
+
+		final Spinner sp = (Spinner) findViewById(R.id.spRateValues);
+
+		String[] opciones = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+				"10" };
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, opciones);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		sp.setAdapter(adapter);
+		sp.setSelection(10);
+
+		final Button butSend = (Button) findViewById(R.id.btnSendComment);
+		butSend.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				boolean validate = true;
+
+				final EditText ed1 = (EditText) findViewById(R.id.etMakeComment);
+				try {
+					String commentText = ed1.getText().toString();
+					if (commentText.equals(" "))
+						validate = false;
+				} catch (Exception e) {
+					validate = false;
+				}
+
+				if (validate) {
+					AsyncTaskAddComment task = new AsyncTaskAddComment(
+							NewComment.this);
+					task.execute(new Integer(idPlace));
+				} else {
+					Toast.makeText(NewComment.this,
+							"El comentario a enviar no puede estar vacio",
+							Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
+
+		TextView actionBar = (TextView) findViewById(R.id.actionBarNewComment);
+		actionBar.setText(R.string.newComment);
+	}
+
+	private class AsyncTaskAddComment extends
+			AsyncTask<Integer, SimpleResponse, Integer> {
+		private Context context;
+		private ProgressDialog dialog;
+
+		public AsyncTaskAddComment(Context cont) {
+			this.context = cont;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			dialog = new ProgressDialog(context);
+			dialog.setTitle(R.string.cargando);
+			dialog.setMessage(getString(R.string.sendToServer));
+			dialog.setCancelable(false);
+			dialog.show();
+		}
+
+		@Override
+		protected Integer doInBackground(Integer... values) {
+			
+			String idPlace = String.valueOf(values[0].intValue());
+
+			EditText ed1 = (EditText) findViewById(R.id.etMakeComment);
+			String commentText = ed1.getText().toString();
+
+			Spinner spRate = (Spinner) findViewById(R.id.spRateValues);
+			Integer rateValue = new Integer(spRate.getSelectedItem().toString());
+
+			try {
+				User user = new User(GlobalParameters.BASE_URL_JSON, context);
+				if (!user.hasAuthKey()) {
+					startActivity(new Intent(NewComment.this,
+							UserLoginActivity.class));
+					return 0;
+				} else {
+					if ((user.getDate() == null)
+							|| (user.isAuthExpired(new Date()))) {
+						UserLoginResponse ulr = user.login(user.getUserName(),
+								user.getPassword(), GlobalParameters.API_KEY);
+						if ((ulr != null) && (ulr.getStatus() == 0)) {
+							user.setCredentials(user.getUserName(),
+									ulr.getResult(), user.getPassword());
+						}
+					}
+
+					Submit submit = new Submit(GlobalParameters.BASE_URL_JSON);
+					SimpleResponse sr = submit.comment(idPlace, commentText,
+							rateValue, GlobalParameters.API_KEY,
+							user.getAuthKey());
+
+					if (sr.getStatus() == GlobalParameters.ERROR_GENERAL) {
+						return -2;
+					} else {
+						return 1;
+					}
+				}
+			} catch (Exception e) {
+				Log.e("ERROR", e.getStackTrace().toString());
+				return -1;
+			}
+		}
+
+		@Override
+		protected void onPostExecute(Integer result) {
+			try {
+				dialog.dismiss();
+				switch (result) {
+				case -2:
+					Toast.makeText(getApplicationContext(), "Login caducado",
+							3000).show();
+					break;
+				case -1:
+					Toast.makeText(context, "Error al enviar el comentario",
+							3000).show();
+					break;
+				case 1:
+					TwitterJ twitter = new TwitterJ(getApplicationContext());
+					if (twitter.hasAccessToken()) {
+						twitter.newTweet("He escrito un comentario sobre "
+								+ placeName + " "
+								+ GlobalParameters.TWITTER_HASHTAG);
+					}
+
+					Toast.makeText(getApplicationContext(),
+							"Comentario realizado correctamente", 3000).show();
+					break;
+				}
+
+				if (result != 0) {
+					setResult(RESULT_OK);
+					NewComment.this.finish();
+				}
+			} catch (Exception e) {
+			}
+			super.onPostExecute(result);
+		}
+	}
+
+	public void onActionBarHomeButtonClick(View v) {
+		startActivity(new Intent(this, DashboardActivity.class));
+	}
+}

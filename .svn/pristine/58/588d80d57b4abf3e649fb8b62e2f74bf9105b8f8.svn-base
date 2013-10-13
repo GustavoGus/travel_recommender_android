@@ -1,0 +1,53 @@
+/**
+ * 
+ */
+package adm.User;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+
+public class UserCredentials {
+	private SharedPreferences preferences;
+	private Editor editor;
+	
+	private static final String PREFERENCES_AUTH_KEY = "authKey";
+	private static final String PREFERENCES_USER_NAME = "userName";
+	private static final String PREFERENCES = "UserPreferences";
+	
+	public UserCredentials(Context context) {
+		// TODO Auto-generated constructor stub
+		preferences 	  = context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE);
+		editor 		  = preferences.edit();
+	}
+	
+	public void storeCredentials(String authKey,String userName) {
+		editor.putString(PREFERENCES_AUTH_KEY, authKey);
+		editor.putString(PREFERENCES_USER_NAME, userName);
+		editor.commit();
+	}
+	
+	public void resetCredentials() {
+		editor.putString(PREFERENCES_AUTH_KEY, null);
+		editor.putString(PREFERENCES_USER_NAME, null);
+		editor.commit();
+	}
+	
+	public String getAuthKey() {
+		String authKey 		= preferences.getString(PREFERENCES_AUTH_KEY, null);
+		
+		if (authKey!=null) 
+			return authKey;
+		else
+			return null;
+	}
+	
+	public String getUserName() {
+		String userName = preferences.getString(PREFERENCES_USER_NAME, null);
+		
+		if (userName!=null) 
+			return userName;
+		else
+			return null;
+	}
+}

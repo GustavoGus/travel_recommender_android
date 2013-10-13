@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/degradado"
+        android:gravity="left|center_vertical" >
+
+        <TextView
+            android:id="@+id/actionBarSearchAdvancedResult"
+            style="@style/TitleBarDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <View style="@style/TitleBarSpring" />
+
+        <ImageView style="@style/TitleBarSeparator" />
+
+        <ImageButton
+            style="@style/TitleBarAction"
+            android:onClick="onActionBarHomeButtonClick"
+            android:src="@drawable/ic_menu_home" />
+    </LinearLayout>
+    
+    <ListView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:divider="#000000"
+        android:dividerHeight="0dp"
+        android:fadingEdge="none"
+        android:scrollbars="vertical" >
+    </ListView>
+
+</LinearLayout>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/degradado"
+        android:gravity="left|center_vertical" ><TextView
+            android:id="@+id/actionBarSearchAdvancedResult"
+            style="@style/TitleBarDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/about" />
+
+        <View style="@style/TitleBarSpring" />
+
+        <ImageView style="@style/TitleBarSeparator" />
+
+        <ImageButton
+            style="@style/TitleBarAction"
+            android:onClick="onActionBarHomeButtonClick"
+            android:src="@drawable/ic_menu_home" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" android:gravity="center">
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher" android:layout_marginTop="20dp"/>
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/bonvoyage"
+            android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#ff8c00" android:textSize="32dp" android:textStyle="bold" android:layout_margin="20dp"/>
+
+        <View android:id="@+id/separator" android:background="#ff8c00" android:layout_width="fill_parent" android:layout_height="3dp" android:layout_margin="3dp"/>
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text='Rosa Mª Giménez Pérez'
+            android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#222222" android:layout_margin="5sp"/>
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text='Alicia Nando Ruiz'
+            android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#222222" android:layout_margin="5sp"/>
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gustavo Vidal Moreno"
+            android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#222222" android:layout_margin="5sp"/>
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rafa Herreros Rincón"
+            android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#222222" android:layout_margin="5sp"/>
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Julián Zaragoza Bellotti"
+            android:textAppearance="?android:attr/textAppearanceLarge" android:textColor="#222222" android:layout_margin="5sp"/>
+
+    </LinearLayout>
+
+</LinearLayout>

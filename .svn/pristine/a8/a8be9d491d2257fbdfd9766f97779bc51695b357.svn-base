@@ -1,0 +1,68 @@
+/**
+ * 
+ */
+package adm.Media;
+
+import android.content.Context;
+import android.media.MediaPlayer;
+import android.os.AsyncTask;
+import android.os.Vibrator;
+import android.util.Log;
+
+/**
+ * Beep sound
+ * @author Usuario
+ * 
+ */
+public class Beep {
+	private MediaPlayer mMediaPlayer;
+	private String logTag = "Beep";
+	
+	public Beep() {}
+
+	/**
+	 * Make beeps in the given context and according to the _iterations you want.
+	 * @param _theContext
+	 * @param _iterations
+	 */
+	public void makeSound(Context _theContext, int _iterations, boolean _vibrate)
+	{
+		new AsyncTaskBeep().execute(_theContext,_iterations,_vibrate);
+	}
+	
+	private class AsyncTaskBeep extends AsyncTask<Object, Void, Void> {
+
+		/* (non-Javadoc)
+		 * @see android.os.AsyncTask#doInBackground(Params[])
+		 */
+		@Override
+		protected Void doInBackground(Object... params) {
+			Log.i(logTag, "start beep task ");		
+			Vibrator v = (Vibrator) ((Context) params[0])
+							.getSystemService(Context.VIBRATOR_SERVICE);
+			
+			try {
+				mMediaPlayer = MediaPlayer.create((Context)params[0],
+						adm.Activities.R.raw.beep);
+	
+				for (int i = 0; i < (Integer) params[1]; i++) {
+					//Start Sound
+					mMediaPlayer.start();
+					// Vibrate for 3 seconds
+					if ((Boolean) params[2]){
+						v.vibrate(mMediaPlayer.getDuration());
+						Log.i(logTag, "Vibrate "+mMediaPlayer.getDuration()+" milliseconds");
+					}
+					//Wait sound duration milliseconds
+					Thread.sleep(mMediaPlayer.getDuration());					
+				}			
+			} catch (Exception ex) {
+				Log.e(logTag, "Music failed: " + ex.getMessage());
+			}
+			return null;
+		}
+		
+	}
+	
+
+}

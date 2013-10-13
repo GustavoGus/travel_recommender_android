@@ -1,0 +1,177 @@
+/**
+ * 
+ */
+package adm.Activities;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Spinner;
+import android.widget.ToggleButton;
+
+/**
+ * @author Usuario
+ * 
+ */
+public class SearchAdvancedActivity extends Activity {
+	View viewToLoad;
+	public TabGroupActivity parentActivity;
+
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		// Quitar barra de arriba.
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		// Aplicar layout
+		// setContentView(R.layout.buscarname);
+
+		viewToLoad = LayoutInflater.from(getParent().getParent()).inflate(
+				R.layout.buscarname, null);
+		this.setContentView(viewToLoad);
+
+		Resources res = getResources();
+		String[] labels = res
+				.getStringArray(R.array.array_localizacion_buscar_name_labels);
+
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+				viewToLoad.getContext(), android.R.layout.simple_spinner_item,
+				labels);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		Spinner sp = (Spinner) findViewById(R.id.spinnerLocalizacion);
+		sp.setAdapter(adapter);
+
+		/*
+		 * Button Buscar
+		 * **************************************************************
+		 */
+		final ImageButton boton = (ImageButton) findViewById(R.id.btnBuscarName);
+		boton.setOnClickListener(new View.OnClickListener() {
+
+			public void onClick(View arg0) {
+
+				String text = ((EditText) findViewById(R.id.editTextBuscarName))
+						.getText().toString();
+				if (!text.equals("")) {
+
+					// Spinner
+					Spinner spinner = (Spinner) findViewById(R.id.spinnerLocalizacion);
+					String selectedVal = getResources().getStringArray(
+							R.array.array_localizacion_buscar_name_values)[spinner
+							.getSelectedItemPosition()];
+
+					Intent intent = new Intent(getParent(),
+							SearchAdvancedResultActivity.class);
+					intent.putExtra("txtBusqueda", text);
+					intent.putExtra("localicacion", selectedVal);
+					intent.putExtra("tipo", getPlaceTypeToggleBtns());
+					
+					/*parentActivity = (TabGroupActivity) getParent();
+					parentActivity.startChildActivity(
+							"SearchAdvancedResultActivity", intent);*/
+					startActivity(intent);
+				}
+
+			}
+		});
+		// ------------------------------------------------------------------
+		boton.requestFocus();
+	}
+	/**
+	 * @return String with checked toggleButtons values
+	 */
+	private String getPlaceTypeToggleBtns() {
+		String res = "";
+		if (((ToggleButton) findViewById(R.id.toggleButtonCiudad)).isChecked()) {
+			res += "CITY";
+		}
+
+		if (((ToggleButton) findViewById(R.id.toggleButtonCultural))
+				.isChecked()) {
+			if (!res.equals(""))
+				res += "|CULTURAL";
+			else
+				res += "CULTURAL";
+		}
+
+		if (((ToggleButton) findViewById(R.id.toggleButtonOcio)).isChecked()) {
+			if (!res.equals(""))
+				res += "|DISCO|PUB";
+			else
+				res += "DISCO|PUB";
+		}
+
+		if (((ToggleButton) findViewById(R.id.toggleButtonHotel)).isChecked()) {
+			if (!res.equals(""))
+				res += "|HOTEL";
+			else
+				res += "HOTEL";
+		}
+
+		if (((ToggleButton) findViewById(R.id.toggleButtonInfraestructura))
+				.isChecked()) {
+			if (!res.equals(""))
+				res += "|INFRAESTRUCTURE";
+			else
+				res += "INFRAESTRUCTURE";
+		}
+
+		if (((ToggleButton) findViewById(R.id.toggleButtonNatural)).isChecked()) {
+			if (!res.equals(""))
+				res += "|NATURAL";
+			else
+				res += "NATURAL";
+		}
+
+		// if (((ToggleButton) findViewById(R.id.toggleButtonPais)).isChecked())
+		// {
+		// if (!res.equals(""))
+		// res += "|COUNTRY";
+		// else
+		// res += "COUNTRY";
+		// }
+
+		if (((ToggleButton) findViewById(R.id.toggleButtonPoi)).isChecked()) {
+			if (!res.equals(""))
+				res += "|POI";
+			else
+				res += "POI";
+		}
+
+		// if (((ToggleButton) findViewById(R.id.toggleButtonPub)).isChecked())
+		// {
+		// if (!res.equals(""))
+		// res += "|PUB";
+		// else
+		// res += "PUB";
+		// }
+
+		if (((ToggleButton) findViewById(R.id.toggleButtonRegion)).isChecked()) {
+			if (!res.equals(""))
+				res += "|REGION|COUNTRY";
+			else
+				res += "REGION|COUNTRY";
+		}
+
+		if (((ToggleButton) findViewById(R.id.toggleButtonRestaurante))
+				.isChecked()) {
+			if (!res.equals(""))
+				res += "|RESTAURANT";
+			else
+				res += "RESTAURANT";
+		}
+
+		return res;
+	}
+}

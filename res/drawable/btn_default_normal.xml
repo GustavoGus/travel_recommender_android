@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true" android:state_checked="false" android:drawable="@drawable/btn_default_normal_ima_orange"></item>
+    <item android:state_pressed="false" android:state_checked="false" android:drawable="@drawable/btn_default_normal_ima"></item>
+    <item android:state_pressed="true" android:state_checked="true" android:drawable="@drawable/btn_default_normal_ima_orange"></item>
+    <item android:state_pressed="false" android:state_checked="true" android:drawable="@drawable/btn_default_normal_ima_orange"></item>
+    <item android:drawable="@drawable/btn_default_normal_ima"></item>
+</selector>

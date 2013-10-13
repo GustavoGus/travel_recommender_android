@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/LayoutAddPrincipal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/Placetag"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/AddPlace"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#f96d06"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/Placename"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Addplacename"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#f96d06"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/PlacenameText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <requestFocus />
+        </EditText>
+
+        <TextView
+            android:id="@+id/PlaceType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Addplacetype"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#f96d06"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/PlaceTypeSpinner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/PlaceParent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Addparentplace"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#f96d06"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/PlaceParentText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/UseActualButton"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Addbuttonuseactual" />
+
+        <Button
+            android:id="@+id/DoneButton"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/AddDone" />
+    </LinearLayout>
+
+    <SlidingDrawer
+        android:id="@+id/AddDetailsSligingDrawer"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:content="@+id/Addcontent"
+        android:handle="@+id/Addhandle" >
+
+        <Button
+            android:id="@+id/Addhandle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+			android:background="@+drawable/flechaup"
+            android:text="@string/AddDetails"
+            android:textColor="#ffffff"
+            android:textStyle="bold"/>
+
+        <LinearLayout
+            android:id="@+id/Addcontent"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="#f96d06"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/AddComment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/AddComment"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#ffffff"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/AddCommentText"
+                android:layout_width="fill_parent"
+                android:layout_height="100px"
+                android:inputType="textMultiLine" />
+
+            <TextView
+                android:id="@+id/AddRate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Addrate"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#ffffff"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/AddRateSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/AddImageTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/AddTitle"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#ffffff"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/AddImageTitleText"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/AddImageDesc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/AddDesc"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#ffffff"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/AddImageDescText"
+                android:layout_width="fill_parent"
+                android:layout_height="100px"
+                android:inputType="textMultiLine" />
+
+            <TextView
+                android:id="@+id/AddImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/AddImage"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#ffffff"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/LayoutAddImage"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="#f96d06"
+                android:orientation="horizontal" >
+
+                <EditText
+                    android:id="@+id/AddImagePath"
+                    android:layout_width="250px"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:id="@+id/AddImageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Addadd" />
+            </LinearLayout>
+        </LinearLayout>
+    </SlidingDrawer>
+
+</FrameLayout>

@@ -1,0 +1,73 @@
+/**
+ * 
+ */
+package adm.Activities;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.SlidingDrawer;
+import android.widget.SlidingDrawer.OnDrawerCloseListener;
+import android.widget.SlidingDrawer.OnDrawerOpenListener;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+/**
+ * @author AndroIT
+ * 
+ */
+public class AddActivity extends Activity {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.add);
+
+		// Creación de la interfaz dinámica
+		final SlidingDrawer drawer = (SlidingDrawer) findViewById(R.id.AddDetailsSligingDrawer);
+
+		drawer.setOnDrawerOpenListener(new OnDrawerOpenListener() {
+			public void onDrawerOpened() {
+
+				Button but = (Button) findViewById(R.id.Addhandle);
+				but.setBackgroundResource(R.drawable.flechadown);
+			}
+
+		});
+
+		drawer.setOnDrawerCloseListener(new OnDrawerCloseListener() {
+			public void onDrawerClosed() {
+				Button but = (Button) findViewById(R.id.Addhandle);
+				but.setBackgroundResource(R.drawable.flechaup);
+
+			}
+
+		});
+
+		final Spinner sp = (Spinner) findViewById(R.id.PlaceTypeSpinner);
+
+		String[] opciones = { "CITY", "REGION", "COUNTRY", "CONTINENT",
+				"NATURAL", "CULTURAL", "POI", "INFRASTRUCTURE", "HOTEL",
+				"RESTAURANT", "PUB", "DISCO" };
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, opciones);
+		sp.setAdapter(adapter);
+
+		final Spinner sp2 = (Spinner) findViewById(R.id.AddRateSpinner);
+
+		String[] opciones2 = { "NO", "0", "1", "2", "3", "4", "5", "6", "7",
+				"8", "9", "10" };
+		ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, opciones2);
+		sp2.setAdapter(adapter2);
+
+		// Para leer el seleccionado
+		// String selec=spinner1.getSelectedItem().toString();
+		// if (selec.equals("sumar"))
+
+	}
+
+}

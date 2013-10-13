@@ -1,0 +1,60 @@
+/**
+ * 
+ */
+package adm.User;
+
+/**
+ * @author Rosa
+ *
+ */
+public class UserLoginResponse {
+	
+	private int status;
+	private String result;
+	private String message;
+	
+	/*
+	 * Getters and Setters
+	 */
+	
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	public String getResult() {
+		return result;
+	}
+	public void setResult(String result) {
+		this.result = result;
+	}
+	
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	
+	/*
+	 * Constructor
+	 */
+	
+	public UserLoginResponse(int status, String result, String message) {
+		super();
+		this.status = status;
+		this.result = result;
+		this.message = message;
+	}
+	
+	/*
+	 * ToString
+	 */
+	
+	@Override
+	public String toString() {
+		return "loginResponse [status=" + status + ", result=" + result + "]";
+	}
+	
+}

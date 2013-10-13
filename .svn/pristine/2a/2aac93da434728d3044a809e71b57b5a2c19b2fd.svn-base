@@ -1,0 +1,231 @@
+/**
+ * 
+ */
+package adm.Activities;
+
+import java.util.ArrayList;
+import java.util.List;
+import adm.Twitter.TwitterJ;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+/**
+ * @author AndroIT
+ * 
+ */
+public class RememberTabActivity extends Activity {
+	ArrayList<String> tweets = new ArrayList<String>();
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		final TwitterJ twitter = new TwitterJ(getParent());
+
+		// Quitar barra de arriba.
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+		// Aplicar layout
+		setContentView(R.layout.recordar);
+
+		if (!twitter.hasAccessToken())
+			viewNotConnected(getParent());
+		else
+			viewConnected(getParent(), twitter);
+
+		// Botón Autorizar Twitter
+		Button auth = (Button) findViewById(R.id.button1);
+		auth.setText("Autorizar");
+
+		auth.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				if (!twitter.hasAccessToken())
+					twitter.authorize();
+			}
+		});
+
+		// Botón refresh barra superior
+		ImageView iv = (ImageView) findViewById(R.id.imageViewRefresh);
+		iv.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				if (twitter.hasAccessToken()) {
+					viewConnected(getParent(), twitter);
+				}
+			}
+		});
+
+		Button map = (Button) findViewById(R.id.button2);
+		map.setText("Mapa");
+		map.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+
+				}
+		});
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    //Alternativa 1
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.remember, menu);
+	    return true;
+	}
+	
+    public boolean onOptionsItemSelected(MenuItem item){
+    	//Handle item selection
+    	switch (item.getItemId()){
+    	case R.id.menu_close:
+    		//onCreateDialog(HELP_DIALOG).show();
+    		return true;
+    	case R.id.menu_delete:
+    		//onCreateDialog(HELP_DIALOG).show();
+    		return true;
+    	default:
+    		return super.onOptionsItemSelected(item);
+    	}
+    }
+
+	// Dibuja los bocadillos.
+	private LinearLayout showComment(Context context, int i, String author,
+			String comment) {
+		LinearLayout commentLayout = new LinearLayout(context);
+		commentLayout.setOrientation(LinearLayout.VERTICAL);
+
+		// TextViews del comentario
+		TextView tvAuthor = new TextView(context);
+		tvAuthor.setTextColor(Color.parseColor("#f96d06"));
+		tvAuthor.setTypeface(null, Typeface.BOLD);
+		TextView tvComment = new TextView(context);
+		tvComment.setTextColor(Color.parseColor("#39302A"));
+
+		// Selecciono situarlo a la izquierda o derecha
+		if ((i + 1) % 2 == 1)
+			commentLayout
+					.setBackgroundResource(R.drawable.bocadillo_white_left);
+		else
+			commentLayout
+					.setBackgroundResource(R.drawable.bocadillo_white_right);
+
+		tvAuthor.setText(author);
+		tvComment.setText(comment);
+
+		// Views del commentLayout
+		commentLayout.addView(tvAuthor);
+		commentLayout.addView(tvComment);
+
+		return commentLayout;
+
+	}
+
+	// Dibuja la interfaz si no está conectado a Twitter
+	private void viewNotConnected(Context context) {
+		TextView status = (TextView) findViewById(R.id.textViewStatus);
+		status.setText( getResources().getString(R.string.offline));
+		
+		LinearLayout parentLayout = (LinearLayout) findViewById(R.id.linearLayoutTweets);
+		
+		String comment = getResources().getString(R.string.welcome) + "\n\n"
+				+ getResources().getString(R.string.logTwitter) + "\n\n"
+				+ getResources().getString(R.string.map);
+		
+		LinearLayout commentLayout = showComment(getParent(), 0, getResources()
+				.getString(R.string.hello), comment);
+
+		parentLayout.addView(commentLayout);
+	}
+	
+	// Dibuja la interfaz si está conectado a Twitter
+	private void viewConnected(Context context, TwitterJ twitter) {
+		TextView status = (TextView) findViewById(R.id.textViewStatus);
+		status.setText( getResources().getString(R.string.online));
+		
+		LinearLayout parentLayout = (LinearLayout) findViewById(R.id.linearLayoutTweets);
+		parentLayout.removeAllViews();
+		AsyncTaskTweet task = new AsyncTaskTweet(getParent(),
+				twitter);
+		task.execute();
+	}
+
+	// AsyncTask
+	public class AsyncTaskTweet extends
+			AsyncTask<Void, List<twitter4j.Status>, Integer> {
+
+		final ProgressDialog dialog;
+		final Context context;
+		final TwitterJ twitter;
+
+		public AsyncTaskTweet(Context cont, TwitterJ twitter) {
+			this.context = cont;
+			this.dialog = ProgressDialog.show(context,
+					context.getString(R.string.cargando),
+					context.getString(R.string.obtInfoServer), true);
+			this.twitter = twitter;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		protected Integer doInBackground(Void... params) {
+			dialog.setCancelable(false);
+			dialog.show();
+
+			List<twitter4j.Status> statuses = twitter.getTimeLine();
+
+			if (statuses == null)
+				return 0;
+
+			else if (!statuses.isEmpty()) {
+				publishProgress(statuses);
+			}
+
+			return 1;
+		}
+
+		protected void onProgressUpdate(List<twitter4j.Status>... statuses) {
+			if (statuses != null) {
+				List<twitter4j.Status> stats = statuses[0];
+				LinearLayout parentLayout = (LinearLayout) findViewById(R.id.linearLayoutTweets);
+
+				int i = 0;
+				for (twitter4j.Status status : stats) {
+
+					if (status.getText().contains("#BV_AndroIT")) {
+						LinearLayout commentLayout = showComment(getParent(),
+								i, status.getUser().getScreenName(),
+								status.getText());
+						parentLayout.addView(commentLayout);
+
+						i++;
+					}
+				}
+			}
+		}
+
+		protected void onPostExecute(Integer result) {
+			dialog.dismiss();
+			if (result == 0)
+				Toast.makeText(context,
+						context.getResources().getString(R.string.failCon),
+						Toast.LENGTH_LONG).show();
+		}
+	}
+
+}

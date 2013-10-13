@@ -1,0 +1,42 @@
+package adm.Submit;
+
+public class SubmitResponse {
+	private int status;
+	private double result;
+	
+	/*
+	 * Getters and Setters
+	 */
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	public double getResult() {
+		return result;
+	}
+	public void setResult(double result) {
+		this.result = result;
+	}
+	
+	/*
+	 * Constructor
+	 */
+	public SubmitResponse(int status, double result) {
+		super();
+		this.status = status;
+		this.result = result;
+	}
+	
+	/*
+	 * ToString
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString(){
+		return "SubmitResponse [status=" + status + ", result=" + result + "]";
+	}
+
+
+}

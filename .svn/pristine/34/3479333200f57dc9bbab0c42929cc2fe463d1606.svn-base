@@ -1,0 +1,434 @@
+/**
+ * 
+ */
+package adm.Activities;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+
+import adm.Comment.CommentItem;
+import adm.Comment.CommentResponse;
+import adm.Image.ImageItem;
+import adm.Image.ImageResponse;
+import adm.Place.Place;
+import adm.Place.PlaceItem;
+import adm.Place.PlaceResponse;
+import adm.Repository.GlobalParameters;
+import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.text.Html;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.Gallery;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+/**
+ * @author AndroIT
+ * 
+ */
+public class PlaceActivity extends Activity {
+	private int idPlace;
+	private String placeName;
+	private float lat;
+	private float lon;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		// Quitar barra de arriba.
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		// Aplicar layout
+		setContentView(R.layout.detalle_ciudad);
+
+		// Esto en la nueva actividad,despues del super.onCreate
+		Bundle extras = getIntent().getExtras();
+		//int idPlace;
+		if (extras != null) {
+			idPlace = extras.getInt("idPlace");
+		} else {
+			// idPlace = -1;
+			// idPlace = 78688;
+			
+			//CAMBIAR ESTO!!
+			idPlace = 76797;
+		}
+
+		/*
+		 * //Solicita los detalles de un lugar Place place = new
+		 * Place(GlobalParameters.BASE_URL_JSON); ArrayList<Integer> ids = new
+		 * ArrayList<Integer>(); //Pasamos como id "78688", para probar
+		 * (Valencia) //ids.add(new Integer(78688)); ids.add(new
+		 * Integer(idPlace)); try { //PlaceResponse resp = place.detail(ids,
+		 * GlobalParameters.API_KEY); PlaceResponse resp = place.detail(ids,
+		 * GlobalParameters.API_KEY); ArrayList<PlaceItem> items =
+		 * resp.getResult(); PlaceItem item = items.get(0);
+		 * 
+		 * TextView tvName = (TextView) findViewById(R.id.tvPlaceName); TextView
+		 * tvDesc = (TextView) findViewById(R.id.tvPlaceDescription);
+		 * tvName.setText(item.getName());
+		 * tvDesc.setText(Html.fromHtml(item.getDesc()),
+		 * TextView.BufferType.SPANNABLE); } catch(Exception e) {
+		 * e.printStackTrace(); TextView tvResult = (TextView)
+		 * findViewById(R.id.tvPlaceDescription); tvResult.setText("ERROR\n" +
+		 * e.getMessage()); }
+		 */
+		
+		TextView actionBar = (TextView) findViewById(R.id.actionBarPlace);
+		actionBar.setText(R.string.placeDetail);
+		
+		// AsyncTask de Place
+		AsyncTaskPlace task = new AsyncTaskPlace(this);
+		task.execute(new Integer(idPlace));
+	}
+
+	// Evento onClick del botón para ver mapa del place
+    public void onClick_viewPlaceMap(View v) {
+    	Intent intent = new Intent(this, PlaceMapActivity.class);
+		intent.putExtra("idPlace", idPlace);
+		intent.putExtra("placeName", placeName);
+		intent.putExtra("lat", lat);
+		intent.putExtra("lon", lon);
+		startActivity(intent);
+		
+		//TabGroupActivity parentActivity = (TabGroupActivity) getParent();
+		//parentActivity.startChildActivity("PlaceMapActivity", intent);
+    }
+    
+	// Evento onClick del botón para ver mapa del place
+    public void onClick_addComment(View v) {
+    	Intent intent = new Intent(this, NewComment.class);
+		intent.putExtra("idPlace", idPlace);
+		startActivity(intent);
+    }
+    
+	// Evento onClick del botón para ver mapa del place
+    public void onClick_addPhoto(View v) {
+    	Intent intent = new Intent(this, TakePhoto.class);
+		intent.putExtra("idPlace", idPlace);
+		startActivity(intent);
+    }
+    
+	/**
+	 * AsyncTaskSearchLocation
+	 * 
+	 * @author AndroIT
+	 */
+	private class AsyncTaskPlace extends
+			AsyncTask<Integer, PlaceResponse, Void> {
+
+		// ProgressDialog
+		ProgressDialog dialog;
+		final Context context;
+		private Place place;
+
+		public AsyncTaskPlace(Context cont) {
+			this.context = cont;
+			try{
+			this.dialog = ProgressDialog.show(context,
+					context.getString(R.string.cargando),
+					context.getString(R.string.obtInfoServer), true);
+			}catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
+
+		@Override
+		protected Void doInBackground(Integer... idPlaces) {
+			try{
+			dialog.setCancelable(false);
+			dialog.show();
+			}catch (Exception e) {
+				// TODO: handle exception
+			}
+
+			// Solicita los detalles de un lugar
+			place = new Place(GlobalParameters.BASE_URL_JSON);
+			ArrayList<Integer> ids = new ArrayList<Integer>();
+			// Pasamos como id "78688", para probar (Valencia)
+			// ids.add(new Integer(78688));
+			ids.add(idPlaces[0]);
+			try {
+				PlaceResponse resp = place
+						.detail(ids, GlobalParameters.API_KEY);
+				if (resp.getResult() != null) {
+					// Envio a publicar la info
+					publishProgress(resp);
+				}
+
+			} catch (Exception e) {
+				Toast.makeText(getApplicationContext(), e.toString(), 3000);
+			}
+
+			return null;
+		}
+
+		@Override
+		protected void onProgressUpdate(PlaceResponse... responses) {
+			PlaceResponse resp = responses[0];
+
+			// MUESTRA DATOS DEL LUGAR
+			ArrayList<PlaceItem> items = resp.getResult();
+			PlaceItem item = items.get(0);
+			String locationDescription;
+
+			lat = item.getLat();
+			lon = item.getLon();
+			placeName = item.getName();
+			TextView tvName = (TextView) findViewById(R.id.tvPlaceName);
+			TextView tvLocation = (TextView) findViewById(R.id.tvPlaceLocation);
+			TextView tvDesc = (TextView) findViewById(R.id.tvPlaceDescription);
+			tvName.setText(item.getName());
+			if (item.getPlace_Type().equals("CITY"))
+				locationDescription = item.getHierarchy().getRegion().getName()
+						+ ", " + item.getHierarchy().getCountry().getName();
+			else
+				locationDescription = item.getHierarchy().getCity().getName()
+						+ ", " + item.getHierarchy().getRegion().getName()
+						+ ", " + item.getHierarchy().getCountry().getName();
+			// tvLocation.setText(item.getLocation_Desc());
+			tvLocation.setText(locationDescription);
+			tvDesc.setText(Html.fromHtml(item.getDesc()),
+					TextView.BufferType.SPANNABLE);
+
+			// Info de las valoraciones y check-ins
+			TextView tv;
+			tv = (TextView) findViewById(R.id.tvRatesDescription);
+			tv.setVisibility(View.VISIBLE);
+			tv = (TextView) findViewById(R.id.tvCheckinsDescription);
+			tv.setVisibility(View.VISIBLE);
+
+			tv = (TextView) findViewById(R.id.tvRatesValue);
+			tv.setText(Float.toString(item.getRate()));
+			tv = (TextView) findViewById(R.id.tvCheckinsValue);
+			tv.setText(Integer.toString(item.getCheck_In()) + " personas");
+
+			// PASA A RECORRER IMAGENES
+			ImageResponse imgresp = null;
+			try {
+				imgresp = place.pictures(item.getId(), "LARGE", 0, 10,
+						GlobalParameters.API_KEY);
+			} catch (Exception e) {
+				Toast.makeText(getApplicationContext(), e.toString(), 3000);
+			}
+			if (imgresp.getResult() != null) {
+				final ArrayList<ImageItem> images = imgresp.getResult().getPics();
+				Gallery gallery = (Gallery) findViewById(R.id.glPlaceImages);
+				gallery.setAdapter(new ImageAdapter(this.context, images));
+				
+				gallery.setOnItemClickListener(new OnItemClickListener() {
+					public void onItemClick(AdapterView parent, View v,
+							int position, long id) {
+						ImageItem im = images.get(position);
+						/*Toast.makeText(PlaceActivity.this,
+								im.getUser_Name() + ", " + im.getDate(),
+								Toast.LENGTH_SHORT).show();*/
+						
+						Dialog dialog = new Dialog(PlaceActivity.this);
+
+						dialog.setContentView(R.layout.image_dialog);
+						dialog.setTitle(im.getUser_Name() + ", " + im.getDate());
+
+						ImageView dialogImage = (ImageView) dialog.findViewById(R.id.imageBig);
+						ImageView imageClicked = (ImageView) v;
+						//dialogImage.setImageResource(R.drawable.android);
+						BitmapDrawable drawable = (BitmapDrawable) imageClicked.getDrawable();
+						Bitmap bitmap = drawable.getBitmap();
+
+						dialogImage.setImageBitmap(bitmap);
+						dialog.show();
+					}
+				});
+
+				/*gallery.setOnItemSelectedListener(new OnItemSelectedListener() {
+					public void onItemSelected(AdapterView parent, View v,
+							int position, long id) {
+						ImageItem im = images.get(position);
+						Toast.makeText(PlaceActivity.this, im.getUser_Name() + ", " + im.getDate(),
+								Toast.LENGTH_SHORT).show();
+					}
+
+					public void onNothingSelected(AdapterView<?> arg0) {
+					}
+				});*/
+
+				// Para seleccionar la imagen central (para el caso que haya
+				// varias)
+				int num = imgresp.getResult().size();
+				if (num % 2 == 1)
+					num = num + 1;
+				gallery.setSelection((num / 2) - 1);
+			}
+
+			// PASA A RECORRER COMENTARIOS
+			CommentResponse comresp = null;
+			try {
+				comresp = place.comments(item.getId(), 0, 10,
+						GlobalParameters.API_KEY);
+			} catch (Exception e) {
+				Toast.makeText(getApplicationContext(), e.toString(), 3000);
+			}
+			if (comresp.getResult().getComments() != null) {
+				ArrayList<CommentItem> comments = comresp.getResult()
+						.getComments();
+				LinearLayout parentLayout = (LinearLayout) findViewById(R.id.linearLayoutMainContainer);
+
+				CommentItem com;
+
+				for (int i = 0; i < comments.size(); i++) {
+					// Layout del comentario
+					LinearLayout commentLayout = new LinearLayout(this.context);
+					commentLayout.setOrientation(LinearLayout.VERTICAL);
+
+					// TextViews del comentario
+					TextView tvAuthor = new TextView(this.context);
+					tvAuthor.setTextColor(Color.parseColor("#f96d06"));
+					tvAuthor.setTypeface(null, Typeface.BOLD);
+					TextView tvDate = new TextView(this.context);
+					tvDate.setTextColor(Color.parseColor("#39302A"));
+					TextView tvComment = new TextView(this.context);
+					tvComment.setTextColor(Color.parseColor("#39302A"));
+
+					// Selecciono situarlo a la izquierda o derecha
+					if ((i + 1) % 2 == 1)
+						commentLayout
+								.setBackgroundResource(R.drawable.bocadillo_white_left);
+					else
+						commentLayout
+								.setBackgroundResource(R.drawable.bocadillo_white_right);
+
+					com = comments.get(i);
+					tvAuthor.setText(com.getUser_Name());
+					tvDate.setText(" " + com.getDate());
+					tvComment.setText(com.getComment());
+					// Views del infoLayout
+					LinearLayout infoLayout = new LinearLayout(this.context);
+					infoLayout.addView(tvAuthor);
+					infoLayout.addView(tvDate);
+					// Views del commentLayout
+					commentLayout.addView(infoLayout);
+					commentLayout.addView(tvComment);
+					// Views del parentLayout
+					parentLayout.addView(commentLayout);
+				}
+			}
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			// Habilito la visibilidad de los botones
+			Button btn;
+			btn = (Button) findViewById(R.id.btn_viewPlaceMap);
+			btn.setVisibility(View.VISIBLE);
+			btn = (Button) findViewById(R.id.btn_addPhoto);
+			btn.setVisibility(View.VISIBLE);
+			btn = (Button) findViewById(R.id.btn_addComment);
+			btn.setVisibility(View.VISIBLE);
+			try{
+			runOnUiThread(new Runnable() {
+				public void run() {
+					dialog.dismiss();
+				}
+			});
+			}catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
+	}
+
+	public class ImageAdapter extends BaseAdapter {
+		// int mGalleryItemBackground;
+		private Context mContext;
+		private ArrayList<ImageItem> images;
+
+		public ImageAdapter(Context c, ArrayList<ImageItem> imgs) {
+			mContext = c;
+			// TypedArray attr =
+			// mContext.obtainStyledAttributes(R.styleable.HelloGallery);
+			// mGalleryItemBackground =
+			// attr.getResourceId(R.styleable.HelloGallery_android_galleryItemBackground,
+			// 0);
+			images = imgs;
+			// attr.recycle();
+		}
+
+		public int getCount() {
+			return images.size();
+		}
+
+		public Object getItem(int position) {
+			return position;
+		}
+
+		public long getItemId(int position) {
+			return position;
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+			// ImageView imageView = new ImageView(mContext);
+			// imageView.setImageResource(mImageIds[position]);
+			// imageView.setLayoutParams(new Gallery.LayoutParams(150, 100));
+			// imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+			// imageView.setBackgroundResource(mGalleryItemBackground);
+
+			ImageView i = new ImageView(mContext);
+
+			try {
+				/* Open a new URL and get the InputStream to load data from it. */
+				URL aURL = new URL(images.get(position).getUrl());
+				URLConnection conn = aURL.openConnection();
+				conn.connect();
+				InputStream is = conn.getInputStream();
+				BufferedInputStream bis = new BufferedInputStream(is);
+				/* Decode url-data to a bitmap. */
+				Bitmap bm = BitmapFactory.decodeStream(bis);
+				bis.close();
+				is.close();
+				/* Apply the Bitmap to the ImageView that will be returned. */
+				i.setImageBitmap(bm);
+			} catch (IOException e) {
+				i.setImageResource(R.drawable.noimage);
+				Log.e("DEBUGTAG", "Remtoe Image Exception", e);
+			}
+
+			/* Image should be scaled as width/height are set. */
+			i.setScaleType(ImageView.ScaleType.FIT_CENTER);
+			// i.setScaleType(ImageView.ScaleType.FIT_XY);
+			/* Set the Width/Height of the ImageView. */
+			i.setLayoutParams(new Gallery.LayoutParams(150, 150));
+			return i;
+		}
+	}
+	
+	public void onActionBarHomeButtonClick(View v) 
+	{
+		//Go to the dashboard
+		startActivity(new Intent(this, DashboardActivity.class));
+	}
+}

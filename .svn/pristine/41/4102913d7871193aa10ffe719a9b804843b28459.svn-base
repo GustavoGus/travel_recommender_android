@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/tvPhotoTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/photoTitle"
+        android:textColor="#f96d06"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/etPhotoTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:inputType="textNoSuggestions">
+    </EditText>
+
+    <LinearLayout
+        android:id="@+id/layoutPlaceRates"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/tvRatesValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="2dip"
+            android:textColor="#39302A"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnTakePhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/newPhoto" />
+
+        <Button
+            android:id="@+id/btnPickPhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/pickGalleryPhoto" />
+
+        <Button
+            android:id="@+id/btnUploadPhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/uploadPhoto" />
+    </LinearLayout>
+    <TextView
+        android:id="@+id/tvPhotoPreview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/photoPreview"
+        android:textColor="#f96d06"
+        android:textStyle="bold" />
+    
+    <ImageView
+        android:id="@+id/ivImageToSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

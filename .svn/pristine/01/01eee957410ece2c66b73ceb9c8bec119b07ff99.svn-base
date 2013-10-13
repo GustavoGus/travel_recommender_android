@@ -1,0 +1,93 @@
+package adm.Search;
+
+import adm.Repository.GlobalParameters;
+
+import com.google.gson.annotations.SerializedName;
+
+/**
+ * Clase que encapsula el objeto Search. Search es el menor objeto devuelto en
+ * las consultas: search.name search.location search.relate
+ * 
+ * Otros: search.my_location es otro caso especial que es resuelto en la clase
+ * 
+ * @author Gustavo
+ */
+public class SearchItem {
+	private int id;
+	private String name;
+	private String place_type;
+	@SerializedName("lat")
+	private float latitude;
+	@SerializedName("lon")
+	private float longitude;
+
+	/*
+	 * Getters and Setters
+	 */
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getPlace_type() {
+		return place_type;
+	}
+	public void setPlace_type(String place_type) {
+		this.place_type = place_type;
+	}
+	public float getLatitude() {
+		return latitude;
+	}
+	public void setLatitude(float latitude) {
+		this.latitude = latitude;
+	}
+	public float getLongitude() {
+		return longitude;
+	}
+	public void setLongitude(float longitude) {
+		this.longitude = longitude;
+	}
+
+	/*
+	 * Constructores
+	 */
+	public SearchItem(int id, String name, String place_type, float latitude,
+			float longitude) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.place_type = place_type;
+		this.latitude = latitude;
+		this.longitude = longitude;
+	}
+
+	/*
+	 * toString
+	 */
+	@Override
+	public String toString() {
+		return name + ", " + place_type + " en " + latitude + " " + longitude;
+		/*
+		 * return "Search [id=" + id + ", name=" + name + ", place_type=" +
+		 * place_type + ", latitude=" + latitude + ", longitude=" + longitude +
+		 * "]";
+		 */
+	}
+	
+	public String toStringWidget() {
+		return name+", "+GlobalParameters.traduceTagTipoSitio(place_type);
+		/*
+		 * return "Search [id=" + id + ", name=" + name + ", place_type=" +
+		 * place_type + ", latitude=" + latitude + ", longitude=" + longitude +
+		 * "]";
+		 */
+	}
+
+}

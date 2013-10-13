@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="45dip"
+        android:background="#f96d06" >
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/logo_actionbar" />
+    </LinearLayout>
+
+    <TableLayout
+        android:id="@+id/tableLayoutProperties"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="#ffaa65"
+            android:gravity="center_vertical"
+            android:padding="4dp" >
+
+            <!-- Page Title -->
+
+            <TextView
+                android:id="@+id/textViewTitProperties"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="@string/propertiesTitle"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:padding="2dp" >
+
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/textViewAlerts"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:text="@string/propertiesAlerts"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#f96d06" />
+
+                <TextView
+                    android:id="@+id/textViewAlertsSummary"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="8dp"
+                    android:text="@string/propertiesAlertsSummary"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="#F78F45" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnAlerts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/propertiesAlertsConfigure">
+            </Button>
+        </TableRow>
+
+        <View
+            android:layout_height="2dip"
+            android:background="#ffaa65" />
+
+        <TableRow
+            android:id="@+id/tableRow3"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:padding="2dp" >
+
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:text="Propiedad"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#f96d06" />
+
+                <TextView
+                    android:id="@+id/textViewAlertsSummary"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="8dp"
+                    android:text="Resumen..."
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="#F78F45" />
+            </LinearLayout>
+        </TableRow>
+
+        <View
+            android:layout_height="2dip"
+            android:background="#ffaa65" />
+
+        <TableRow
+            android:id="@+id/tableRow4"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:padding="2dp" >
+
+            <LinearLayout
+                android:id="@+id/linearLayout3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:text="Propiedad"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#f96d06" />
+
+                <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="8dp"
+                    android:text="Resumen..."
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="#F78F45" />
+            </LinearLayout>
+        </TableRow>
+
+        <View
+            android:layout_height="2dip"
+            android:background="#ffaa65" />
+
+        <TableRow
+            android:id="@+id/tableRow5"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:padding="2dp" >
+
+            <LinearLayout
+                android:id="@+id/linearLayout4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:text="Propiedad"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#f96d06" />
+
+                <TextView
+                    android:id="@+id/textView7"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="8dp"
+                    android:text="Resumen..."
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="#F78F45" />
+            </LinearLayout>
+        </TableRow>
+    </TableLayout>
+
+</LinearLayout>

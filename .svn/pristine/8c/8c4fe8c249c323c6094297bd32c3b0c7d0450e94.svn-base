@@ -1,0 +1,111 @@
+package adm.Place;
+
+import java.util.ArrayList;
+
+import adm.Comment.CommentItem;
+import adm.Image.ImageItem;
+/**
+ * Clase que encapsula el objeto Place Simplificado, para la jerarquía de otros Place.
+ *  
+ */
+public class PlaceItem {
+	 private Integer id;
+	 private String name;
+	 private String place_type;
+	 private String location_desc;
+	 private float latitude;
+	 private float longitude;
+	 private String desc;
+	 //private int rate;
+	 private float rate;
+	 private int check_in;
+	 private ImageItem thumb;
+	 //private String comment;
+	 private CommentItem comment;
+	 private ArrayList<PlaceHierachyItem> hierachy;
+	/*
+	 * Getters and Setters
+	 */
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getPlace_Type() {
+		return place_type;
+	}
+	public void setPlace_Type(String place_type) {
+		this.place_type = place_type;
+	}
+	public String getLocation_Desc() {
+		return location_desc;
+	}
+	public void setLocation_Desc(String location_desc) {
+		this.location_desc = location_desc;
+	}
+	public float getLatitude() {
+		return latitude;
+	}
+	public void setLatitude(float latitude) {
+		this.latitude = latitude;
+	}
+	public float getLongitude() {
+		return longitude;
+	}
+	public void setLongitude(float longitude) {
+		this.longitude = longitude;
+	}
+	public String getDesc() {
+		return desc;
+	}
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+	public float getRate() {
+		return rate;
+	}
+	public void setRate(float rate) {
+		this.rate = rate;
+	}
+	public int getCheck_In() {
+		return check_in;
+	}
+	public void setCheck_In(int check_in) {
+		this.check_in = check_in;
+	}
+	public ImageItem getImage() {
+		return thumb;
+	}
+	public void setImage(ImageItem thumb) {
+		this.thumb = thumb;
+	}
+	public CommentItem getComment() {
+		return comment;
+	}
+	public void setComment(CommentItem comment) {
+		this.comment = comment;
+	}
+	public ArrayList<PlaceHierachyItem> getHierachy() {
+		return hierachy;
+	}
+	public void setHierachy(ArrayList<PlaceHierachyItem> hierachy) {
+		this.hierachy = hierachy;
+	}
+		
+	/*
+	 * Constructores
+	 */
+	public PlaceItem(int id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
+	}
+}
+

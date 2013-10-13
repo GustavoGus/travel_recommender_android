@@ -1,0 +1,75 @@
+/**
+ * 
+ */
+package adm.User;
+
+import java.text.DateFormat;
+import java.util.Date;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+
+public class UserCredentials {
+	private SharedPreferences preferences;
+	private Editor editor;
+
+	private static final String PREFERENCES_AUTH_KEY = "authKey";
+	private static final String PREFERENCES_DATE = "date";
+	private static final String PREFERENCES_USER_NAME = "userName";
+	private static final String PREFERENCES_PASSWORD = "password";
+	private static final String PREFERENCES = "UserPreferences";
+
+	public UserCredentials(Context context) {
+		preferences = context.getSharedPreferences(PREFERENCES,
+				Context.MODE_PRIVATE);
+		editor = preferences.edit();
+	}
+
+	public void storeCredentials(String authKey, Date date, String userName,
+			String password) {
+		editor.putString(PREFERENCES_AUTH_KEY, authKey);
+		editor.putString(PREFERENCES_USER_NAME, userName);
+		editor.putString(PREFERENCES_PASSWORD, password);
+		editor.putString(PREFERENCES_DATE,
+				String.valueOf(date.getTime()));
+		editor.commit();
+	}
+
+	public void resetCredentials() {
+		editor.putString(PREFERENCES_AUTH_KEY, null);
+		editor.putString(PREFERENCES_USER_NAME, null);
+		editor.putString(PREFERENCES_PASSWORD, null);
+		editor.putString(PREFERENCES_DATE, null);
+		editor.commit();
+	}
+
+	public String getAuthKey() {
+		String authKey = preferences.getString(PREFERENCES_AUTH_KEY, null);
+
+		return authKey;
+	}
+
+	public Date getDate() {
+		String sdate = preferences.getString(PREFERENCES_DATE, null);
+		if (sdate != null) {
+			Date date = new Date(Long.parseLong(sdate));
+			return date;
+		} else
+			return null;
+	}
+
+	public String getUserName() {
+		String userName = preferences.getString(PREFERENCES_USER_NAME, null);
+
+		return userName;
+
+	}
+
+	public String getPassword() {
+		String password = preferences.getString(PREFERENCES_PASSWORD, null);
+
+		return password;
+	}
+
+}

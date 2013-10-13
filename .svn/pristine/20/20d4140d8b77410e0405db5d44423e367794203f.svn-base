@@ -1,0 +1,150 @@
+/**
+ * 
+ */
+package adm.Activities;
+
+import java.util.ArrayList;
+
+import adm.Activities.PlaceActivity.ImageAdapter;
+import adm.Comment.CommentItem;
+import adm.Comment.CommentResponse;
+import adm.Image.ImageItem;
+import adm.Image.ImageResponse;
+import adm.Place.Place;
+import adm.Place.PlaceItem;
+import adm.Place.PlaceResponse;
+import adm.Repository.GlobalParameters;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.text.Html;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.Gallery;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
+
+import com.google.android.maps.*;
+
+/**
+ * @author AndroIT
+ * 
+ */
+public class PlaceMapActivity extends MapActivity {
+	private int idPlace;
+	private MapController mc;
+	private MapView mv;
+	private float lat, lon;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.placemap);
+
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			idPlace = extras.getInt("idPlace");
+			lat = extras.getFloat("lat");
+			lon = extras.getFloat("lon");
+		} else {
+			// CAMBIAR ESTO!!
+			idPlace = 76797;
+			lat = 0;
+			lon = 0;
+		}
+
+		mv = (MapView) findViewById(R.id.placeMapView);
+		mv.setBuiltInZoomControls(true);
+		// mv.setStreetView(true);
+		mc = mv.getController();
+		GeoPoint center = new GeoPoint((int) (lat*1E6),(int) (lon*1E6));
+		mc.setCenter(center);
+		mc.setZoom(14);
+		
+		//AsyncTaskPlace task = new AsyncTaskPlace(this);
+		//task.execute(idPlace);
+	}
+
+	@Override
+	protected boolean isRouteDisplayed() {
+		// Necessary method to override in MapActivity
+		return false;
+	}
+
+	private class AsyncTaskPlace extends
+			AsyncTask<Integer, PlaceResponse, Void> {
+
+		// ProgressDialog
+		final ProgressDialog dialog;
+		final Context context;
+		private Place place;
+
+		public AsyncTaskPlace(Context cont) {
+			this.context = cont;
+			this.dialog = ProgressDialog.show(context,
+					context.getString(R.string.cargando),
+					context.getString(R.string.obtInfoServer), true);
+		}
+
+		@Override
+		protected Void doInBackground(Integer... idPlaces) {
+			dialog.setCancelable(false);
+			dialog.show();
+
+			// Solicita los detalles de un lugar
+			place = new Place(GlobalParameters.BASE_URL_JSON);
+			ArrayList<Integer> ids = new ArrayList<Integer>();
+			// Pasamos como id "78688", para probar (Valencia)
+			// ids.add(new Integer(78688));
+			ids.add(idPlaces[0]);
+			try {
+				PlaceResponse resp = place
+						.detail(ids, GlobalParameters.API_KEY);
+				if (resp.getResult() != null) {
+					// Envio a publicar la info
+					publishProgress(resp);
+				}
+
+			} catch (Exception e) {
+				Toast.makeText(getApplicationContext(), e.toString(), 3000);
+			}
+
+			return null;
+		}
+
+		@Override
+		protected void onProgressUpdate(PlaceResponse... responses) {
+			PlaceResponse resp = responses[0];
+
+			// MUESTRA DATOS DEL LUGAR
+			ArrayList<PlaceItem> items = resp.getResult();
+			PlaceItem item = items.get(0);
+			int lat = (int) (item.getLat()*1E6);
+			int lon = (int) (item.getLon()*1E6);
+			GeoPoint gp = new GeoPoint(lat, lon);
+			mc.setCenter(gp);
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			runOnUiThread(new Runnable() {
+				public void run() {
+					dialog.dismiss();
+				}
+			});
+		}
+	}
+}

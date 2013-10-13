@@ -1,0 +1,169 @@
+/**
+ * 
+ */
+package adm.Activities;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapController;
+import com.google.android.maps.MapView;
+import com.google.android.maps.Overlay;
+import com.google.android.maps.OverlayItem;
+
+import adm.Geolocation.MarkerItemizedOverlay;
+import adm.Place.Place;
+import adm.Place.PlaceItem;
+import adm.Place.PlaceResponse;
+import adm.Repository.GlobalParameters;
+import adm.Search.Search;
+import adm.Search.SearchItem;
+import adm.Search.SearchResponse;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.widget.Toast;
+
+/**
+ * @author AndroIT
+ * 
+ */
+public class PlaceMapActivity extends MapActivity {
+	private int idPlace;
+	private MapController mc;
+	private MapView mv;
+	private float lat, lon;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.placemap);
+
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			idPlace = extras.getInt("idPlace");
+			lat = extras.getFloat("lat");
+			lon = extras.getFloat("lon");
+		} else {
+			// CAMBIAR ESTO!!
+			idPlace = 76797;
+			lat = Float.parseFloat("39.436911");
+			lon = Float.parseFloat("-0.465416");
+		}
+
+		mv = (MapView) findViewById(R.id.placeMapView);
+		mv.setBuiltInZoomControls(true);
+		// mv.setStreetView(true);
+		mc = mv.getController();
+		GeoPoint center = new GeoPoint((int) (lat*1E6),(int) (lon*1E6));
+		mc.setCenter(center);
+		mc.setZoom(14);
+		
+		AsyncTaskRelated task = new AsyncTaskRelated(this);
+		task.execute(idPlace);
+	}
+
+	@Override
+	protected boolean isRouteDisplayed() {
+		// Necessary method to override in MapActivity
+		return false;
+	}
+
+	private class AsyncTaskRelated extends
+			AsyncTask<Integer, SearchResponse, Void> {
+
+		// ProgressDialog
+		final ProgressDialog dialog;
+		final Context context;
+		private Search search;
+		private List<Overlay> mapOverlay;
+		private MarkerItemizedOverlay mio;
+
+		public AsyncTaskRelated(Context cont) {
+			this.context = cont;
+			this.dialog = ProgressDialog.show(context,
+					context.getString(R.string.cargando),
+					context.getString(R.string.obtInfoServer), true);
+		}
+
+		@Override
+		protected Void doInBackground(Integer... idPlaces) {
+			dialog.setCancelable(false);
+			dialog.show();
+
+			// Solicita los detalles de un lugar
+			search = new Search(GlobalParameters.BASE_URL_JSON);
+			try {
+				String place_type = "CITY|REGION|COUNTRY|CONTINENT|NATURAL|CULTURAL|POI|INFRASTRUCTURE|HOTEL|RESTAURANT|PUB|DISCO";
+				SearchResponse sr = search.related(idPlaces[0].toString(), GlobalParameters.API_KEY, place_type, "");
+				if (sr.getResult() != null) {
+					// Envio a publicar la info
+					publishProgress(sr);
+				}
+
+			} catch (Exception e) {
+				Toast.makeText(getApplicationContext(), e.toString(), 3000);
+			}
+
+			return null;
+		}
+
+		@Override
+		protected void onProgressUpdate(SearchResponse... responses) {
+			SearchResponse resp = responses[0];
+
+			// MUESTRA DATOS DEL LUGAR
+			ArrayList<SearchItem> items = resp.getResult();
+			mapOverlay = mv.getOverlays();
+			Drawable dr = getResources().getDrawable(R.drawable.marker);
+			mio = new MarkerItemizedOverlay(dr);
+			
+			SearchItem item;
+			int lat, lon;
+			GeoPoint point;
+			OverlayItem oi;
+			/*for(int i=0; i<items.size(); i++)
+			{
+				item = items.get(0);
+				lat = (int) (item.getLatitude()*1E6);
+				lon = (int) (item.getLongitude()*1E6);
+				point = new GeoPoint(lat, lon);
+				oi = new OverlayItem(point, item.getName(), item.getPlace_type());
+				mio.addOverlay(oi);
+			}*/
+			
+			point = new GeoPoint((int) (39.436911*1E6), (int) (-0.465416*1E6));
+			oi = new OverlayItem(point, "Torrent", "CIUDAD");
+			mio.addOverlay(oi);
+			
+			point = new GeoPoint((int) (39.436483*1E6), (int) (-0.463540*1E6));
+			oi = new OverlayItem(point, "La Torre", "POI");
+			mio.addOverlay(oi);
+			
+			point = new GeoPoint((int) (39.432986*1E6), (int) (-0.471180*1E6));
+			oi = new OverlayItem(point, "Font de les Granotes", "POI");
+			mio.addOverlay(oi);
+
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			mapOverlay.add(mio);
+			runOnUiThread(new Runnable() {
+				public void run() {
+					dialog.dismiss();
+				}
+			});
+		}
+	}
+}

@@ -1,0 +1,408 @@
+/**
+ * 
+ */
+package adm.Activities;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import adm.Geolocation.Geolocation;
+import adm.Place.Place;
+import adm.Place.PlaceHierarchy;
+import adm.Place.PlaceItem;
+import adm.Place.PlaceResponse;
+import adm.Repository.GlobalParameters;
+import adm.Search.Search;
+import adm.Search.SearchMyLocationResponse;
+import adm.Search.SearchMyLocationResult;
+import adm.Submit.SimpleResponse;
+import adm.Submit.Submit;
+import adm.Submit.SubmitResponse;
+import adm.User.User;
+import adm.User.UserCredentials;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.SlidingDrawer;
+import android.widget.Toast;
+import android.widget.SlidingDrawer.OnDrawerCloseListener;
+import android.widget.SlidingDrawer.OnDrawerOpenListener;
+import android.widget.Spinner;
+
+/**
+ * @author AndroIT
+ * 
+ */
+public class AddActivity extends Activity {
+
+	AsyncTaskAdd task = new AsyncTaskAdd(this);
+	//AsyncTaskUseActual tasku = new AsyncTaskUseActual(this);
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.add);
+
+		// Creación de la interfaz dinámica
+		
+//		final SlidingDrawer drawer = (SlidingDrawer) findViewById(R.id.AddDetailsSligingDrawer);
+//
+//		drawer.setOnDrawerOpenListener(new OnDrawerOpenListener() {
+//			public void onDrawerOpened() {
+//
+//				Button but = (Button) findViewById(R.id.Addhandle);
+//				but.setBackgroundResource(R.drawable.flechadown);
+//			}
+//
+//		});
+//
+//		drawer.setOnDrawerCloseListener(new OnDrawerCloseListener() {
+//			public void onDrawerClosed() {
+//				Button but = (Button) findViewById(R.id.Addhandle);
+//				but.setBackgroundResource(R.drawable.flechaup);
+//
+//			}
+//
+//		});
+
+		
+		
+		
+		
+		
+		final Spinner sp = (Spinner) findViewById(R.id.PlaceTypeSpinner);
+
+		String[] opciones = { "CITY", "REGION", "COUNTRY", "CONTINENT",
+				"NATURAL", "CULTURAL", "POI", "INFRASTRUCTURE", "HOTEL",
+				"RESTAURANT", "PUB", "DISCO" };
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, opciones);
+		sp.setAdapter(adapter);
+		
+		
+
+//		final Spinner sp2 = (Spinner) findViewById(R.id.AddRateSpinner);
+//
+//		String[] opciones2 = { "-1", "0", "1", "2", "3", "4", "5", "6", "7",
+//				"8", "9", "10" };
+//		ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(this,
+//				android.R.layout.simple_spinner_item, opciones2);
+//		sp2.setAdapter(adapter2);
+
+		final Button butDone = (Button) findViewById(R.id.DoneButton);
+		butDone.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				
+				//task.execute(sp, sp2);
+				task.execute(sp);
+				finish();
+
+			}
+		});
+
+//		final Button butUse = (Button) findViewById(R.id.UseActualButton);
+//		butUse.setOnClickListener(new OnClickListener() {
+//			public void onClick(View v) {
+//
+//				tasku.execute(sp);
+//
+//			}
+//		});
+	}
+
+	private class AsyncTaskAdd extends AsyncTask<Spinner, SubmitResponse, Void> {
+
+//		int flagc = 0;
+		int flaga = 0;
+		final Context context;
+		private Submit submit;
+		private Geolocation geolocation;
+		String id;
+		ProgressDialog dialog;
+
+		
+		public AsyncTaskAdd(Context cont) {
+			this.context = cont;
+			try {
+				dialog = new ProgressDialog(getParent().getParent());
+				dialog.setTitle(R.string.cargando);
+				dialog.setMessage(getString(R.string.obtInfoServer));
+				dialog.setCancelable(false);
+				dialog.show();
+			} catch (final Exception e) {
+				runOnUiThread(new Runnable() {
+					public void run() {
+						Toast.makeText(getApplicationContext(), e.getMessage(),
+								3000).show();
+						Log.e("ERROR", e.getStackTrace().toString());
+					}
+				});
+			}
+			
+		}
+
+
+		@Override
+		protected Void doInBackground(Spinner... sps) {
+			try{
+			dialog.setCancelable(false);
+			dialog.show();
+			}catch(final Exception e){}
+			// recogida de datos
+			final EditText ed1 = (EditText) findViewById(R.id.PlacenameText);
+			String name = ed1.getText().toString();
+
+			if (name.equals(" ")) {
+				flaga = 1; //nombre es obligatorio
+			}
+
+			String selectype = sps[0].getSelectedItem().toString();
+			
+
+			final EditText ed2 = (EditText) findViewById(R.id.PlaceDescriptionText);
+			String pdesc = ed2.getText().toString();
+
+			if (pdesc.equals(" ")) {
+				pdesc = null;
+			}
+
+
+			final EditText ed3 = (EditText) findViewById(R.id.PlaceParentText);
+			String parent = ed3.getText().toString();
+
+			if (parent.equals(" ")) {
+				parent = null;
+			}
+
+//			final EditText ed3 = (EditText) findViewById(R.id.AddCommentText);
+//			String com = ed3.getText().toString();
+//
+//			if (com.equals(" ")) {
+//				flagc = 1;
+//			}
+//			String selecrate = sps[1].getSelectedItem().toString();
+//
+//			if (selecrate.equals("-1")) {
+//				flagc = 1;
+//			}
+//
+//			Integer rate = Integer.valueOf(selecrate);
+			
+			
+			//Subida del Place
+			try {
+				geolocation.myCoords(context);
+				if (flaga == 0) {
+
+					geolocation.myCoords(context);
+					submit = new Submit(GlobalParameters.BASE_URL_JSON);
+					
+					
+					
+					User user = new User(GlobalParameters.BASE_URL_JSON, context);
+					if(user.hasAuthKey()){
+						SubmitResponse resp = submit.place(name, selectype, parent,
+								GlobalParameters.my_latitude,
+								GlobalParameters.my_longitude, pdesc,
+								GlobalParameters.API_KEY,
+								user.getAuthKey());
+
+						if (resp.getResult() != null) {
+							id = resp.getResult();
+							
+							runOnUiThread(new Runnable() {
+								public void run() {
+									Toast.makeText(getApplicationContext(),	"Su Lugar se ha almacenado con id: " + id, 3000);
+									
+								}
+							});
+						}
+					}
+					else { //aquí llamar a activity de login, es el caso donde no está logueado
+					}
+				}
+
+			} catch (final Exception e) {
+				runOnUiThread(new Runnable() {
+				     public void run() {
+				      Toast.makeText(getApplicationContext(), e.getMessage(),3000).show();
+				      Log.e("ERROR", e.getStackTrace().toString());
+				     }
+				    });
+			}
+
+			//subir comentario
+//			try {
+//				if (flagc == 0) {
+//
+//					UserCredentials user = new UserCredentials(context);
+//					if(user.getAuthKey()!=null){
+//					SimpleResponse sresp = submit.comment(id, com, rate,
+//							GlobalParameters.API_KEY,
+//							user.getAuthKey());
+//					}
+//
+//				}
+//
+//			} catch (final Exception e) {
+//				runOnUiThread(new Runnable() {
+//			     public void run() {
+//				      Toast.makeText(getApplicationContext(), e.getMessage(),3000).show();
+//				      Log.e("ERROR", e.getStackTrace().toString());
+//				     }
+//				    });
+//				
+//			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			runOnUiThread(new Runnable() {
+				public void run() {
+					try{
+					dialog.dismiss();
+					}catch(final Exception e){}
+				}
+			});
+		}
+	}
+
+//	
+//	private class AsyncTaskUseActual extends
+//			AsyncTask<Spinner, SubmitResponse, Void> {
+//
+//		final Context context;
+//		ProgressDialog dialog;
+//		private Geolocation geolocation;
+//		Search sr;
+//		SearchMyLocationResult smlr;
+//		SearchMyLocationResponse sResponse;
+//		String id;
+//		Place place;
+//
+//		public AsyncTaskUseActual(Context cont) {
+//			this.context = cont;
+//			try {
+//				dialog = new ProgressDialog(getParent().getParent());
+//				dialog.setTitle(R.string.cargando);
+//				dialog.setMessage(getString(R.string.obtInfoServer));
+//				dialog.setCancelable(false);
+//				dialog.show();
+//			} catch (final Exception e) {
+//				runOnUiThread(new Runnable() {
+//					public void run() {
+//						Toast.makeText(getApplicationContext(), e.getMessage(),
+//								3000).show();
+//						Log.e("ERROR", e.getStackTrace().toString());
+//					}
+//				});
+//			}
+//		}
+//
+//		@Override
+//		protected Void doInBackground(Spinner... sps) {
+//			try{
+//				dialog.setCancelable(false);
+//				dialog.show();
+//				}catch(final Exception e){}
+//
+//			try {
+//
+//				geolocation = new Geolocation();
+//				sr = new Search(GlobalParameters.BASE_URL_JSON);
+//				smlr = new SearchMyLocationResult();
+//				sResponse = new SearchMyLocationResponse();
+//
+//				// consultar donde estamos
+//				geolocation.myCoords(context);
+//				sResponse = sr
+//						.my_location(GlobalParameters.my_latitude,
+//								GlobalParameters.my_longitude,
+//								GlobalParameters.API_KEY);
+//
+//				// Extraer respuesta
+//				List<SearchMyLocationResult> result = new ArrayList<SearchMyLocationResult>();
+//				result = sResponse.getResult();
+//
+//				Iterator<SearchMyLocationResult> it = result.iterator();
+//				while (it.hasNext()) {
+//
+//					smlr = it.next();
+//				}
+//
+//				id = smlr.getPlace().getId();
+//
+//				// buscar detalles del lugar y escribirlos en pantalla
+//
+//				place = new Place(GlobalParameters.BASE_URL_JSON);
+//				ArrayList<Integer> ids = new ArrayList<Integer>();
+//				ids.add(Integer.valueOf(id));
+//				PlaceResponse resp = place
+//						.detail(ids, GlobalParameters.API_KEY);
+//				if (resp.getResult() != null) {
+//					final EditText ed1 = (EditText) findViewById(R.id.PlacenameText);
+//
+//					ArrayList<PlaceItem> items = resp.getResult();
+//					PlaceItem item = items.get(0);
+//
+//					String name = item.getName();
+//					ed1.setText(name);
+//
+//					int position = 0;
+//					String placetype = item.getPlace_Type();
+//
+//					for (int i = 0; i <= 11; i++) {
+//						if (GlobalParameters.TAGS_BUSQUEDAS[i]
+//								.equals(placetype)) {
+//							position = i;
+//							break;
+//						}
+//					}
+//
+//					sps[0].setSelection(position);
+//
+//					PlaceHierarchy hierachy = item.getHierarchy();
+//
+//					String parents = hierachy.getPlace().getName() + hierachy.getCity().getName() +hierachy.getCountry().getName()+hierachy.getRegion().getName();
+//					
+//				
+//					final EditText ed2 = (EditText) findViewById(R.id.PlaceParentText);
+//					ed2.setText(parents);
+//				}
+//
+//			} catch (final Exception e) {
+//				runOnUiThread(new Runnable() {
+//					public void run() {
+//						Toast.makeText(getApplicationContext(), e.getMessage(),
+//								3000).show();
+//						Log.e("ERROR", e.getStackTrace().toString());
+//					}
+//				});
+//			}
+//			return null;
+//		}
+//		@Override
+//		protected void onPostExecute(Void result) {
+//			runOnUiThread(new Runnable() {
+//				public void run() {
+//					try{
+//						dialog.dismiss();
+//						}catch(final Exception e){}
+//				}
+//			});
+//		}
+//	}
+
+}

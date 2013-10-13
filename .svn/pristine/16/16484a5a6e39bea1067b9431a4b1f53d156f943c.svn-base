@@ -1,0 +1,208 @@
+/**
+ * 
+ */
+package adm.Activities;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import twitter4j.Status;
+import adm.Comment.CommentItem;
+import adm.Place.Place;
+import adm.Place.PlaceResponse;
+import adm.Twitter.TwitterJ;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+/**
+ * @author AndroIT
+ * 
+ */
+public class RememberTabActivity extends Activity {
+	ArrayList<String> tweets = new ArrayList<String>();
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		final TwitterJ twitter = new TwitterJ(this);
+
+		// Quitar barra de arriba.
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+		// Aplicar layout
+		setContentView(R.layout.recordar);
+		Button auth = (Button) findViewById(R.id.button1);
+
+		auth.setText("Autorizar");
+		auth.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if (!twitter.hasAccessToken())
+					twitter.authorize();
+			}
+		});
+
+		Button refresh = (Button) findViewById(R.id.button2);
+		refresh.setText("Tweets");
+		refresh.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if (twitter.hasAccessToken()) {
+					AsyncTaskTweet task = new AsyncTaskTweet(
+							RememberTabActivity.this, twitter);
+					task.execute();
+
+					//
+					// List<Status> statuses = twitter.getTimeLine(); for
+					// (Status status : statuses) {
+					// System.out.println(status.getUser().getName() + ":" +
+					// status.getText()); if
+					// (status.getText().contains("#BV!_AndroIT")) {
+					// tweets.add(status.getText()); } }
+
+					/*
+					 * IDs ids = twitter.searchFriends(); while(ids.hasNext()){
+					 * getListView(twitter, ids.getNextCursor()); }
+					 */
+
+				}
+
+				// getListView();
+			}
+		});
+	}
+
+	public void getListView() {
+		ListView lv1 = (ListView) findViewById(R.id.listView1);
+		lv1.setBackgroundColor(0x88888888);
+
+		lv1.setAdapter(new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, tweets));
+
+	}
+	
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//	    //Alternativa 1
+//	    MenuInflater inflater = getMenuInflater();
+//	    inflater.inflate(R.menu.remember, menu);
+//	    return true;
+//	}
+
+	public class AsyncTaskTweet extends
+			AsyncTask<Void, List<twitter4j.Status>, Integer> {
+
+		final ProgressDialog dialog;
+		final Context context;
+		final TwitterJ twitter;
+
+		public AsyncTaskTweet(Context cont, TwitterJ twitter) {
+			this.context = cont;
+			this.dialog = ProgressDialog.show(context,
+					context.getString(R.string.cargando),
+					context.getString(R.string.obtInfoServer), true);
+			this.twitter = twitter;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		protected Integer doInBackground(Void... params) {
+			dialog.setCancelable(false);
+			dialog.show();
+
+			List<twitter4j.Status> statuses = twitter.getTimeLine();
+
+			if (statuses==null) return 0;
+			
+			else if (!statuses.isEmpty()) { 
+				publishProgress(statuses);
+			}
+
+			return 1;
+		}
+
+		protected void onProgressUpdate(List<twitter4j.Status>... statuses) {
+			if (statuses != null) {
+				List<twitter4j.Status> stats = statuses[0];
+				LinearLayout parentLayout = (LinearLayout) findViewById(R.id.linearLayoutTweets);
+
+				int i = 0;
+				for (twitter4j.Status status : stats) { 
+
+					Log.d("Twitter", status.getText());
+					Log.d("Twitter", status.getUser().getScreenName());
+					Log.d("Twitter", status.getUser().getName());
+
+					if (status.getText().contains("#BV_AndroIT")) {
+						LinearLayout commentLayout = new LinearLayout(
+								this.context);
+						commentLayout.setOrientation(LinearLayout.VERTICAL);
+
+						// TextViews del comentario
+						TextView tvAuthor = new TextView(this.context);
+						tvAuthor.setTextColor(Color.parseColor("#f96d06"));
+						tvAuthor.setTypeface(null, Typeface.BOLD);
+						TextView tvComment = new TextView(this.context);
+						tvComment.setTextColor(Color.parseColor("#39302A"));
+
+						// Selecciono situarlo a la izquierda o derecha
+						if ((i + 1) % 2 == 1)
+							commentLayout
+									.setBackgroundResource(R.drawable.bocadillo_white_left);
+						else
+							commentLayout
+									.setBackgroundResource(R.drawable.bocadillo_white_right);
+
+						tvAuthor.setText(status.getUser().getScreenName());
+						tvComment.setText(status.getText());
+
+						// Views del infoLayout
+						LinearLayout infoLayout = new LinearLayout(this.context);
+						infoLayout.addView(tvAuthor);
+
+						// Views del commentLayout
+						commentLayout.addView(infoLayout);
+						commentLayout.addView(tvComment);
+
+						// Views del parentLayout
+						parentLayout.addView(commentLayout);
+
+						i++;
+					}
+				}
+			}
+		}
+
+		protected void onPostExecute(Integer result) {
+			dialog.dismiss();
+			if (result == 0)
+				Toast.makeText(
+						context,
+						context.getResources().getString(
+								R.string.failCon), Toast.LENGTH_LONG).show();
+		}
+	}
+	
+
+}

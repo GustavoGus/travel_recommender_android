@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">	
+    <PreferenceCategory android:title="@string/alert_pref">
+        <CheckBoxPreference android:title="@string/beep" android:key="beep_pref" android:summary="@string/beep_descr"/>
+        <CheckBoxPreference android:title="@string/vibration" android:key="vibration_pref" android:summary="@string/vibration_descr"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/language_pref">
+        <ListPreference android:title="@string/language_pref" android:entryValues="@array/array_preferences_values" android:key="lang_pref" android:entries="@array/array_preferences_language"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/widget">
+        <CheckBoxPreference android:title="@string/menu_accomodation" android:key="widget_accomodation" android:summary="@string/menu_accomodation_descr"/>
+        <CheckBoxPreference android:title="@string/menu_restaurants" android:key="widget_restaurants" android:summary="@string/menu_restaurants_descr"/>
+        <CheckBoxPreference android:title="@string/menu_bar" android:key="widget_bar" android:summary="@string/menu_bar_descr"/>
+        <CheckBoxPreference android:title="@string/menu_poi" android:key="widget_poi" android:summary="@string/menu_poi_descr"/>
+        <CheckBoxPreference android:title="@string/menu_infrastucture" android:key="widget_infrastructure" android:summary="@string/menu_infrastucture_descr"/>     
+    </PreferenceCategory>
+</PreferenceScreen>

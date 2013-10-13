@@ -1,0 +1,36 @@
+package adm.Place;
+
+/**
+ * Clase que encapsula el objeto Place Simplificado, para la jerarquía de otros Place.
+ *  
+ */
+public class PlaceHierachyItem {
+	private int id;
+	private String name;
+	/*
+	 * Getters and Setters
+	 */
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+		
+	/*
+	 * Constructores
+	 */
+	public PlaceHierachyItem(int id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
+	}
+
+}
+

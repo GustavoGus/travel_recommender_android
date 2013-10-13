@@ -1,0 +1,70 @@
+/**
+ * 
+ */
+package adm.Image;
+
+import java.util.ArrayList;
+
+import adm.Place.PlaceItem;
+
+/**
+ * Clase que encapsula los objectos ImageItem.
+ *
+ */
+public class Pics {
+	private ArrayList<ImageItem> pics;
+	private String next_query;
+	
+	public Pics(ArrayList<ImageItem> pics, String next_query) {
+		super();
+		this.pics = pics;
+		this.next_query = next_query;
+	}
+	
+	/**
+	 * @return the next_query
+	 */
+	public String getNext_query() {
+		return next_query;
+	}
+
+	/**
+	 * @param next_query the next_query to set
+	 */
+	public void setNext_query(String next_query) {
+		this.next_query = next_query;
+	}
+
+	/**
+	 * @return the pictures
+	 */
+	public ArrayList<ImageItem> getPics() {
+		return pics;
+	}
+
+	/**
+	 * @param pictures the pictures to set
+	 */
+	public void setPics(ArrayList<ImageItem> pics) {
+		this.pics = pics;
+	}
+	
+	public boolean add(ImageItem object) {
+		return pics.add(object);
+	}
+	public void clear() {
+		pics.clear();
+	}
+	public boolean contains(Object object) {
+		return pics.contains(object);
+	}
+	public boolean isEmpty() {
+		return pics.isEmpty();
+	}
+	public boolean remove(Object object) {
+		return pics.remove(object);
+	}
+	public int size() {
+		return pics.size();
+	}
+}

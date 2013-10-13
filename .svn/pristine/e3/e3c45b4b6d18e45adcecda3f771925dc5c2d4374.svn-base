@@ -1,0 +1,410 @@
+/**
+ * 
+ */
+package adm.Activities;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.text.SimpleDateFormat;
+
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.Overlay;
+import com.google.android.maps.OverlayItem;
+
+import adm.Geolocation.MyBalloonItemizedOverlay;
+import adm.Repository.GlobalParameters;
+import adm.Search.Search;
+import adm.Search.SearchItem;
+import adm.Search.SearchResponse;
+import adm.Submit.SimpleResponse;
+import adm.Submit.Submit;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+/**
+ * @author AndroIT
+ * 
+ */
+public class TakePhoto extends Activity {
+	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+	private static final int CAMERA_PIC_REQUEST = 1337;
+	private static final int SELECT_PHOTO = 200;
+
+	private int idPlace;
+	private String fileRoute;
+	private Uri fileUri;
+	public static final String TAKE_PHOTO_PREFS = "TakePhotoPrefs";
+	public static final int PREFS_MODE = Activity.MODE_PRIVATE;
+	//private ProgressDialog dialog;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onPause()
+	 */
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		savePreferences();
+		super.onPause();
+		Log.d("TakePhoto", "Entro en onPause");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onResume()
+	 */
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		Log.d("TakePhoto", "Entro en onResume");
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.takephoto);
+		// fileRoute = "";
+		SharedPreferences myPrefs = getSharedPreferences(TAKE_PHOTO_PREFS,
+				PREFS_MODE);
+		fileRoute = myPrefs.getString("fileRoute", "");
+		
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			idPlace = extras.getInt("idPlace");
+		} else {
+			// CAMBIAR ESTO!!
+			idPlace = 76797;
+		}
+		
+		Log.d("TakePhoto", "Entro en onCreate");
+		Button btnTake = (Button) findViewById(R.id.btnTakePhoto);
+		btnTake.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				// create Intent to take a picture and return control to the
+				// calling application
+				Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+				// fileUri = getOutputMediaFileUri(); // create a file to save
+				// the image
+				File newFile = getOutputMediaFile();
+				fileRoute = newFile.getAbsolutePath().toString();
+				// setFileUri(getOutputMediaFileUri());
+				setFileUri(getOutputMediaFileUri(newFile));
+				intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the
+																	// image
+																	// file name
+
+				// start the image capture Intent
+				Log.d("TakePhoto", "Envio intent a la camara");
+				startActivityForResult(intent,
+						CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+				// startActivityForResult(intent, CAMERA_PIC_REQUEST);
+			}
+
+		});
+
+		Button btnUpload = (Button) findViewById(R.id.btnUploadPhoto);
+		btnUpload.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				EditText title = (EditText) findViewById(R.id.etPhotoTitle);
+				if(title.getText() == null || title.getText().toString().length() < 1)
+				{
+					Toast.makeText(getApplicationContext(),
+							"Debes escribir un texto como titulo de la imagen",
+							Toast.LENGTH_SHORT);
+				}
+				else if (fileRoute != "") {
+					// Enviar la foto
+					//submitPhotoToServer();
+					AsyncTaskSubmitPicture task = new AsyncTaskSubmitPicture(TakePhoto.this);
+					task.execute(idPlace);
+				} else {
+					Toast.makeText(getApplicationContext(),
+							"No has hecho/seleccionado imagen a subir!",
+							Toast.LENGTH_SHORT);
+				}
+			}
+
+		});
+		
+		Button btnGallery = (Button) findViewById(R.id.btnPickPhoto);
+		btnGallery.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+				photoPickerIntent.setType("image/*");
+				startActivityForResult(photoPickerIntent, SELECT_PHOTO); 
+			}
+
+		});
+		
+		showImage();
+	}
+
+
+	private void setFileUri(Uri fileUri) {
+		this.fileUri = fileUri;
+	}
+
+	public Uri getFileUri() {
+		return this.fileUri;
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+			//PARA RECIBIR RESULTADO DE HACER UNA FOTO
+			if (resultCode == RESULT_OK) {
+				// Image captured and saved to fileUri specified in the Intent
+				if (data != null) {
+					Toast.makeText(this, "Image saved to:\n" + data.getData(),
+							Toast.LENGTH_LONG).show();
+				} else {
+					savePreferences();
+					showImage();
+				}
+			} else if (resultCode == RESULT_CANCELED) {
+				// User cancelled the image capture
+				fileRoute = "";
+				savePreferences();
+				showImage();
+			} else {
+				// Image capture failed, advise user
+				fileRoute = "";
+				savePreferences();
+				showImage();
+			}
+		}
+		else if (requestCode == SELECT_PHOTO) {
+			//PARA RECIBIR EL RESULTADO DE SELECCIONAR IMAGEN DE LA GALERÍA
+			if (resultCode == RESULT_OK) {
+				// Image captured and saved to fileUri specified in the Intent
+				if (data != null) {
+					Uri imageURI = data.getData();
+		            String route = getRealPathFromURI(imageURI);
+		            Log.d("photoFromGallery","Fichero de la galeria en:" +route);
+		            
+		            fileRoute = route;
+		            savePreferences();
+		            showImage();
+				} else {
+					//savePreferences();
+					showImage();
+				}
+			} else if (resultCode == RESULT_CANCELED) {
+				// User cancelled the image capture
+				fileRoute = "";
+				savePreferences();
+				showImage();
+			} else {
+				// Image capture failed, advise user
+				fileRoute = "";
+				savePreferences();
+				showImage();
+			}
+		}
+	}
+
+	/** Create a file Uri for saving an image or video */
+	public static Uri getOutputMediaFileUri() {
+		return Uri.fromFile(getOutputMediaFile());
+	}
+
+	public static Uri getOutputMediaFileUri(File f) {
+		return Uri.fromFile(f);
+	}
+
+	public static File getOutputMediaFile() {
+		// It can be fail in lower API versions than 8
+		File mediaStorageDir = new File(
+				Environment
+						.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+				"BonVoyage");
+
+		// Create the storage directory if it does not exist
+		if (!mediaStorageDir.exists()) {
+			if (!mediaStorageDir.mkdirs()) {
+				Log.d("BonVoyage", "Error al crear directorio en la SD");
+				return null;
+			}
+		}
+
+		// Create a media file name
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
+				.format(new Date());
+		File mediaFile;
+		mediaFile = new File(mediaStorageDir.getPath() + File.separator
+				+ "IMG_BV_" + timeStamp + ".jpg");
+		return mediaFile;
+	}
+
+	protected void savePreferences() {
+		SharedPreferences myPrefs = getSharedPreferences(TAKE_PHOTO_PREFS,
+				PREFS_MODE);
+		Editor editor = myPrefs.edit();
+
+		editor.putString("fileRoute", fileRoute);
+		editor.commit();
+	}
+
+	protected void showImage() {
+		ImageView iv = (ImageView) findViewById(R.id.ivImageToSend);
+		Button btnSend = (Button) findViewById(R.id.btnUploadPhoto);
+		TextView tvPhoto = (TextView) findViewById(R.id.tvPhotoPreview);
+		if (fileRoute != "")
+		{
+			//Muestro boton de subir foto + info de la imagen
+			btnSend.setVisibility(Button.VISIBLE);
+			tvPhoto.setVisibility(TextView.VISIBLE);
+			iv.setVisibility(ImageView.VISIBLE);
+			iv.setImageBitmap(BitmapFactory.decodeFile(fileRoute));
+		}
+		else
+		{
+			//Oculto boton de subir foto + info de la imagen
+			btnSend.setVisibility(Button.INVISIBLE);
+			tvPhoto.setVisibility(TextView.INVISIBLE);
+			iv.setVisibility(ImageView.INVISIBLE);
+			//iv.setImageDrawable(getResources().getDrawable(R.drawable.noimage));
+		}
+	}
+
+	private class AsyncTaskSubmitPicture extends
+			AsyncTask<Integer, SimpleResponse, Void> {
+
+		private ProgressDialog dialog;
+		private Context context;
+		private Submit sm;
+		private int resultCode;
+		
+		public AsyncTaskSubmitPicture(Context cont) {
+			this.context = cont;
+			this.resultCode = -1;
+		}
+
+
+		@Override
+		protected void onPreExecute() {
+			try {
+				this.dialog = ProgressDialog.show(context,
+						context.getString(R.string.cargando),
+						context.getString(R.string.obtInfoServer), true);
+				} catch (Exception e)
+				{
+					Log.e("asyncTaskSubmitPicture", "Error en constructor de AsyncTask");
+				}
+		}
+
+
+		@Override
+		protected Void doInBackground(Integer... idPlaces) {
+			try {
+				//dialog.setCancelable(false);
+				//dialog.show();
+			} catch (Exception e)
+			{
+				Log.e("asyncTaskSubmitPicture", "Error en el dialog");
+			}
+
+			String auth_token = "e7dcfd243c6cc293d937cd044afd91ed";
+			int idPlace = idPlaces[0].intValue();
+			EditText etTitle = (EditText) findViewById(R.id.etPhotoTitle);
+			String title = etTitle.getText().toString();
+			
+			if(fileRoute != "")
+			{
+				try {
+					sm = new Submit(GlobalParameters.BASE_URL_JSON);
+					SimpleResponse sr = sm.picture(String.valueOf(idPlace), title, "desc",
+							fileRoute, GlobalParameters.API_KEY, auth_token);
+					publishProgress(sr);
+				} catch (Exception e) {
+					Log.e("asyncTaskSubmitPicture", "Error al enviar la imagen");
+					return null;
+				}
+			}
+
+			return null;
+		}
+
+		@Override
+		protected void onProgressUpdate(SimpleResponse... responses) {
+			SimpleResponse resp = responses[0];
+			if (resp == null || resp.getStatus() != 0) {
+				Toast.makeText(
+						context,
+						"El servidor no reconoce la imagen o ha fallado al subirla",
+						Toast.LENGTH_SHORT);
+			}
+			else {
+				Toast.makeText(
+						context,
+						"Foto subida correctamente!",
+						Toast.LENGTH_SHORT);
+				resultCode = 1;
+			}
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			try {
+			/*runOnUiThread(new Runnable() {
+				public void run() {
+					dialog.dismiss();
+				}
+			});*/
+			
+			dialog.dismiss();
+			
+			if(resultCode > 0)
+				Toast.makeText(
+						context,
+						"Error al subir la imagen",
+						Toast.LENGTH_SHORT);
+			else
+				Toast.makeText(
+						context,
+						"Foto subida correctamente!",
+						Toast.LENGTH_SHORT);
+			}catch (Exception e)
+			{
+				Log.e("asyncTaskSubmitPicture", "Error al cerrar el dialog");
+			}
+		}
+	}
+	
+	public String getRealPathFromURI(Uri contentUri) {
+        String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = managedQuery(contentUri, proj, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
+    }
+
+
+}

@@ -1,0 +1,224 @@
+package adm.Place;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import adm.Image.ImageResponse;
+import adm.Comment.CommentResponse;
+import android.util.Log;
+
+/**
+ * @author AndroIT
+ * 
+ */
+public class Place {
+	private String logTag = "";
+	private String url = "";
+
+	/**
+	 * @param _baseUrl
+	 *            : Base Url
+	 */
+	public Place(String _baseUrl) { 
+		super();
+		this.url = _baseUrl;
+	}
+	
+	/**
+	 * Place.Detail of Destinia API
+	 * @param [ids]
+	 * @param _api_key
+	 * @return  PlaceResponse
+	 * @throws Exception
+	 */
+	public PlaceResponse detail(ArrayList<Integer> _ids, String _api_key) throws Exception {
+		logTag = "place_detail";
+		
+		Log.i(logTag, "Inicio");
+
+		/*
+		 * Constructing URL
+		 */
+		String urlAux = "http://" + url;
+		final List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+		pairs.add(new BasicNameValuePair("method", "place.detail"));
+		pairs.add(new BasicNameValuePair("ids", _ids.get(0).toString()));
+		pairs.add(new BasicNameValuePair("api_key", _api_key));
+		urlAux += "?" + URLEncodedUtils.format(pairs, "utf-8");
+		return requestPlaceDetail(urlAux);
+	}
+	
+	private PlaceResponse requestPlaceDetail(String _url) throws Exception {
+		PlaceResponse sResponse = null;
+		final HttpClient client = new DefaultHttpClient();
+		final HttpGet request = new HttpGet(_url);
+		request.setHeader("Accept", "application/json");
+		
+		Log.i(logTag, "Executing requestPlace");
+		HttpResponse response = client.execute(request);
+		HttpEntity entity = response.getEntity();
+		if (entity != null) {
+			InputStream stream = entity.getContent();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					stream));
+			StringBuilder sb = new StringBuilder();
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+			stream.close();
+			String responseString = sb.toString();
+
+			GsonBuilder builder = new GsonBuilder();
+			Gson gson = builder.create();
+			JSONObject json = new JSONObject(responseString);
+			sResponse = gson.fromJson(json.toString(), PlaceResponse.class);
+		}
+
+		/* Return */
+		Log.i(logTag, "Finish requestPlaceDetail");
+		return sResponse;
+	
+	}
+	
+	/**
+	 * Place.Pictures of Destinia API
+	 * @param _id
+	 * @param _pic_size
+	 * @param _offset
+	 * @param _amount
+	 * @param _api_key
+	 * @return  PlacePictureResponse
+	 * @throws Exception
+	 */
+	public ImageResponse pictures(int _id, String _pic_size, int _offset, int _amount, String _api_key) throws Exception {
+		logTag = "place_pictures";
+		
+		Log.i(logTag, "Inicio");
+
+		/*
+		 * Constructing URL
+		 */
+		String urlAux = "http://" + url;
+		final List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+		pairs.add(new BasicNameValuePair("method", "place.pictures"));
+		pairs.add(new BasicNameValuePair("id", String.valueOf(_id)));
+		pairs.add(new BasicNameValuePair("pic_size", _pic_size));
+		pairs.add(new BasicNameValuePair("offset", String.valueOf(_offset)));
+		pairs.add(new BasicNameValuePair("amount", String.valueOf(_amount)));
+		pairs.add(new BasicNameValuePair("api_key", _api_key));
+		urlAux += "?" + URLEncodedUtils.format(pairs, "utf-8");
+		return requestPlacePicture(urlAux);
+	}
+	
+	private ImageResponse requestPlacePicture(String _url) throws Exception {
+		ImageResponse sResponse = null;
+		final HttpClient client = new DefaultHttpClient();
+		final HttpGet request = new HttpGet(_url);
+		request.setHeader("Accept", "application/json");
+		
+		Log.i(logTag, "Executing requestPlace");
+		HttpResponse response = client.execute(request);
+		HttpEntity entity = response.getEntity();
+		if (entity != null) {
+			InputStream stream = entity.getContent();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					stream));
+			StringBuilder sb = new StringBuilder();
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+			stream.close();
+			String responseString = sb.toString();
+
+			GsonBuilder builder = new GsonBuilder();
+			Gson gson = builder.create();
+			JSONObject json = new JSONObject(responseString);
+			sResponse = gson.fromJson(json.toString(), ImageResponse.class);
+		}
+
+		/* Return */
+		Log.i(logTag, "Finish requestPlacePicture");
+		return sResponse;
+	
+	}
+	
+	/**
+	 * Place.Comments of Destinia API
+	 * @param _id
+	 * @param _offset
+	 * @param _amount
+	 * @param _api_key
+	 * @return  PlaceCommentResponse
+	 * @throws Exception
+	 */
+	public CommentResponse comments(int _id, int _offset, int _amount, String _api_key) throws Exception {
+		logTag = "place_comments";
+		
+		Log.i(logTag, "Inicio");
+
+		/*
+		 * Constructing URL
+		 */
+		String urlAux = "http://" + url;
+		final List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+		pairs.add(new BasicNameValuePair("method", "place.comments"));
+		pairs.add(new BasicNameValuePair("id", String.valueOf(_id)));
+		pairs.add(new BasicNameValuePair("offset", String.valueOf(_offset)));
+		pairs.add(new BasicNameValuePair("amount", String.valueOf(_amount)));
+		pairs.add(new BasicNameValuePair("api_key", _api_key));
+		urlAux += "?" + URLEncodedUtils.format(pairs, "utf-8");
+		return requestPlaceComments(urlAux);
+	}
+	
+	private CommentResponse requestPlaceComments(String _url) throws Exception {
+		CommentResponse sResponse = null;
+		final HttpClient client = new DefaultHttpClient();
+		final HttpGet request = new HttpGet(_url);
+		request.setHeader("Accept", "application/json");
+		
+		Log.i(logTag, "Executing requestPlace");
+		HttpResponse response = client.execute(request);
+		HttpEntity entity = response.getEntity();
+		if (entity != null) {
+			InputStream stream = entity.getContent();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					stream));
+			StringBuilder sb = new StringBuilder();
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+			stream.close();
+			String responseString = sb.toString();
+
+			GsonBuilder builder = new GsonBuilder();
+			Gson gson = builder.create();
+			JSONObject json = new JSONObject(responseString);
+			sResponse = gson.fromJson(json.toString(), CommentResponse.class);
+		}
+
+		/* Return */
+		Log.i(logTag, "Finish requestPlaceComments");
+		return sResponse;
+	
+	}
+}

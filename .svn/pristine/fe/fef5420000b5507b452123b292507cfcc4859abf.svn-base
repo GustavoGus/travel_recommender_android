@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/degradado"
+        android:gravity="left|center_vertical" >
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/logo_actionbar_sin_fondo" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutInfoDashboard"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="15dip"
+        android:paddingBottom="15dip" >
+
+        <TextView
+            android:id="@+id/tvSaludo"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="#f96d06"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:text="@string/saludo" />
+
+        <TextView
+            android:id="@+id/tvPregunta"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="#39302A"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            android:text="@string/pregunta" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="6dip">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btn_actionBuscar"
+                style="@style/dashboardButton"
+                android:drawableTop="@drawable/btn_actionbuscar_selector"
+                android:onClick="onActionBuscarClick"
+                android:text="@string/buscarName" />
+
+            <Button
+                android:id="@+id/btn_actionDisfrutar"
+                style="@style/dashboardButton"
+                android:drawableTop="@drawable/btn_actiondisfrutar_selector"
+                android:onClick="onActionDisfrutarClick"
+                android:text="@string/disfrutarName" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btn_actionRecordar"
+                style="@style/dashboardButton"
+                android:drawableTop="@drawable/btn_actionrecordar_selector"
+                android:onClick="onActionRecordarClick"
+                android:text="@string/recordarName" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!--  <LinearLayout
+        android:id="@+id/linearLayoutBottom"
+        android:layout_width="fill_parent"
+        android:layout_height="60dip"  />
+    
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+                android:onClick="onPruebasClick"
+                android:text="Boton Pruebas" /> -->
+</LinearLayout>

@@ -1,0 +1,63 @@
+package adm.Submit;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import adm.Geolocation.Geolocation;
+import adm.Repository.GlobalParameters;
+import adm.Search.Search;
+import adm.Search.SearchMyLocationResponse;
+import adm.Search.SearchMyLocationResult;
+import adm.User.User;
+import adm.User.UserCredentials;
+
+import android.content.Context;
+
+public class Checkin{
+
+	public Checkin() { 
+		super();
+	}
+	
+	/**
+	 * @param _context
+	 * @param _rate
+	 * @return  Nothing
+	 * @throws Exception
+	 */
+	
+	public void make_checkin(Context _context, Double _rate) throws Exception {
+		
+		Submit sb = new Submit(GlobalParameters.BASE_URL_JSON);
+		Geolocation gps = new Geolocation();
+		Search sr = new Search(GlobalParameters.BASE_URL_JSON);
+		SearchMyLocationResult smlr = new SearchMyLocationResult();
+		SearchMyLocationResponse sResponse = new SearchMyLocationResponse();
+		
+		
+		gps.myCoords(_context);
+		
+		sResponse = sr.my_location(GlobalParameters.my_latitude, GlobalParameters.my_longitude, GlobalParameters.API_KEY);
+		List<SearchMyLocationResult> result = new ArrayList<SearchMyLocationResult>();
+		result = sResponse.getResult();
+		
+		Iterator<SearchMyLocationResult> it = result.iterator();
+		while (it.hasNext()){
+			
+			smlr = it.next();
+		}
+		
+		String id = smlr.getPlace().getId();
+		
+		User user = new User(GlobalParameters.BASE_URL_JSON, _context);
+		if(user.hasAuthKey()){
+		sb.checkin(id, _rate, GlobalParameters.API_KEY,user.getAuthKey());
+		}
+		else { //aquí llamar a activity de login
+		}
+		}
+	}
+	
+	
+	

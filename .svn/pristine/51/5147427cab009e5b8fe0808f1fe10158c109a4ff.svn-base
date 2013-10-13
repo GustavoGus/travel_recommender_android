@@ -1,0 +1,230 @@
+/**
+ * 
+ */
+package adm.User;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.content.Context;
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+public class User {
+
+	private String url;
+	private String userName;
+	private String authKey;
+	private String password;
+	private UserCredentials session;
+	private Context context;
+	UserLoginResponse login;
+	Date date;
+
+
+	public User(String url, Context context) {
+		super();
+		this.url = url;
+		this.context = context;
+		this.session = new UserCredentials(this.context);
+		this.userName = session.getUserName();
+		this.authKey = session.getAuthKey();
+		this.password = session.getPassword();
+		this.date = session.getDate();
+	}
+
+	public boolean hasAuthKey() {
+		if (authKey != null)
+			return true;
+		else
+			return false;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public String getAuthKey() {
+		return authKey;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public void setCredentials(String userName, String authKey, String password) {
+		this.userName = userName;
+		this.authKey = authKey;
+		this.password = password;
+		Date date = new Date();
+		session.storeCredentials(authKey, date, userName, password);
+	}
+
+	public void resetCredentials() {
+		if (authKey != null)
+			session.resetCredentials();
+	}
+	
+	public boolean isAuthExpired(Date date){
+		// Diferencia entre la fecha guardada y la pasada por parámetro en ms.
+		long diff = date.getTime() - this.date.getTime();
+		
+		//Pasamos diff a minutos y vemos si son más de 20 desde la última sesión
+		if (diff / (1000*60) > 20) {
+			Log.v("Diferencia",Long.toString(diff/(1000*60)));
+			return true;
+		}
+		else{
+			Log.v("Diferencia",Long.toString(diff/(1000*60)));
+			return false;
+		}
+	}
+
+	public UserLoginResponse login(String user, String pass, String apiKey) {
+		String urlAux = "http://" + url;
+		List<NameValuePair> param = new ArrayList<NameValuePair>();
+		param.add(new BasicNameValuePair("method", "user.login"));
+		param.add(new BasicNameValuePair("username", user));
+		param.add(new BasicNameValuePair("password", pass));
+		param.add(new BasicNameValuePair("api_key", apiKey));
+		urlAux += "?" + URLEncodedUtils.format(param, "utf-8");
+
+		Log.v("url", urlAux);
+
+		return requestLogin(urlAux);
+	}
+
+	private UserLoginResponse requestLogin(String url) {
+
+		try {
+
+			HttpClient client = new DefaultHttpClient();
+			HttpGet request = new HttpGet(url);
+			request.setHeader("Accept", "application/json");
+			HttpResponse response = client.execute(request);
+			HttpEntity entity = response.getEntity();
+
+			if (entity != null) {
+				InputStream stream = entity.getContent();
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(stream));
+				StringBuilder sb = new StringBuilder();
+				String line = null;
+				while ((line = reader.readLine()) != null) {
+					sb.append(line + "\n");
+				}
+				stream.close();
+				String responseString = sb.toString();
+
+				GsonBuilder builder = new GsonBuilder();
+				Gson gson = builder.create();
+				JSONObject json = new JSONObject(responseString);
+				UserLoginResponse rLogin = gson.fromJson(json.toString(),
+						UserLoginResponse.class);
+				
+				return rLogin;
+			}
+
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public UserRegisterResponse register(String email, String user,
+			String pass, String name, String apiKey) {
+		String urlAux = "http://" + url;
+		List<NameValuePair> param = new ArrayList<NameValuePair>();
+		param.add(new BasicNameValuePair("method", "user.register"));
+		param.add(new BasicNameValuePair("email", email));
+		param.add(new BasicNameValuePair("username", user));
+		param.add(new BasicNameValuePair("password", pass));
+		param.add(new BasicNameValuePair("name", name));
+		param.add(new BasicNameValuePair("api_key", apiKey));
+		urlAux += "?" + URLEncodedUtils.format(param, "utf-8");
+
+		Log.v("url", urlAux);
+
+		return requestRegister(urlAux, param);
+	}
+
+	public UserRegisterResponse requestRegister(String url,
+			List<NameValuePair> pairs) {
+
+		try {
+
+			HttpClient client = new DefaultHttpClient();
+			HttpGet request = new HttpGet(url);
+			request.setHeader("Accept", "application/json");
+			HttpResponse response = client.execute(request);
+			HttpEntity entity = response.getEntity();
+
+			if (entity != null) {
+				InputStream stream = entity.getContent();
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(stream));
+				StringBuilder sb = new StringBuilder();
+				String line = null;
+				while ((line = reader.readLine()) != null) {
+					sb.append(line + "\n");
+				}
+				stream.close();
+				String responseString = sb.toString();
+				Log.v("Respuesta", responseString);
+
+				GsonBuilder builder = new GsonBuilder();
+				Gson gson = builder.create();
+				JSONObject json = new JSONObject(responseString);
+				UserRegisterResponse rRegister = gson.fromJson(json.toString(),
+						UserRegisterResponse.class);
+
+				return rRegister;
+			}
+
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+}

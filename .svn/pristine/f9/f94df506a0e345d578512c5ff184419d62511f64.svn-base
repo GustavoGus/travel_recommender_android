@@ -1,0 +1,134 @@
+/**
+ * 
+ */
+package adm.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import adm.Activities.R;
+import adm.Search.SearchMyLocationResult;
+import android.content.Context;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
+
+/**
+ * @author AndroIT
+ * 
+ */
+
+public class ListViewImFeelingLuckyAdapter
+		extends
+			ArrayAdapter<SearchMyLocationResult> {
+
+	private ArrayList<SearchMyLocationResult> items;
+	private ViewHolder holder;
+	private Context context;
+	public static boolean tipoBocadillito = false;
+
+	public ListViewImFeelingLuckyAdapter(Context context,
+			int textViewResourceId, List<SearchMyLocationResult> list) {
+		super(context, textViewResourceId, list);
+		this.items = (ArrayList<SearchMyLocationResult>) list;
+		this.context = context;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		View v = convertView;
+
+		if (v == null) {
+			LayoutInflater vi = (LayoutInflater) context
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			if (tipoBocadillito == false) {
+				v = vi.inflate(R.layout.listview_item_left, null);
+				tipoBocadillito = true;
+			} else {
+				v = vi.inflate(R.layout.listview_item_right, null);
+				tipoBocadillito = false;
+			}
+
+			holder = new ViewHolder();
+
+			holder.setTitulo((TextView) v.findViewById(R.id.titulo));
+			holder.setSubtitulo((TextView) v.findViewById(R.id.subtitulo));
+			holder.setSubsubtitulo((TextView) v.findViewById(R.id.subsubtitulo));
+			v.setTag(holder);
+		} else {
+			holder = (ViewHolder) v.getTag();
+		}
+		SearchMyLocationResult listViewItem = items.get(position);
+
+		// Rellenando el item de la lista
+		if (listViewItem.getCity() != null) {
+			// Titulo			
+			SpannableString content = new SpannableString(listViewItem.getCity().getName());
+			content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+			holder.getTitulo().setText(content);
+			// Subtitulo
+			if (listViewItem.getRegion() != null
+					&& listViewItem.getCountry().getName() != null) {
+				holder.getSubtitulo().setText(
+						(CharSequence) listViewItem.getRegion().getName() + ", "
+								+ listViewItem.getCountry().getName());
+			} else {
+				if (listViewItem.getCountry().getName() != null) {
+					holder.getSubtitulo().setText(
+							listViewItem.getCountry().getName());
+				} else {
+					if (listViewItem.getRegion() != null) {
+						holder.getSubtitulo().setText(
+								listViewItem.getRegion()
+										.getName());
+					} else {
+						holder.getSubtitulo().setText("");
+					}
+				}
+			}
+			// Subsubtitulo
+			if (listViewItem.getPlace() != null) {
+				holder.getSubsubtitulo().setText(
+						listViewItem.getPlace().getName());
+			} else {
+				holder.getSubsubtitulo().setText("");
+			}
+		} else {
+
+			// Titulo		
+			SpannableString content = new SpannableString(listViewItem.getPlace().getName());
+			content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+			holder.getTitulo().setText(content);		
+			
+			// Subtitulo
+			if (listViewItem.getRegion() != null
+					&& listViewItem.getCountry().getName() != null) {
+				holder.getSubtitulo().setText(
+						(CharSequence) listViewItem.getRegion().getName() + ", "
+								+ listViewItem.getCountry().getName());
+			} else {
+				if (listViewItem.getCountry().getName() != null) {
+					holder.getSubtitulo().setText(
+							listViewItem.getCountry().getName());
+				} else {
+					if (listViewItem.getRegion() != null) {
+						holder.getSubtitulo().setText(
+								listViewItem.getRegion()
+										.getName());
+					} else {
+						holder.getSubtitulo().setText("");
+					}
+				}
+			}
+			// Subsubtitulo
+			holder.getSubsubtitulo().setText("");
+		}
+		holder.setIdPlace(Integer.parseInt(listViewItem.getCity().getId()));
+
+		return v;
+	}
+}

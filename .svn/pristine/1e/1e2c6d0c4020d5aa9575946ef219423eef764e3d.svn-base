@@ -1,0 +1,40 @@
+/**
+ * 
+ */
+package adm.Activities;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.Window;
+import android.view.WindowManager;
+
+/**
+ * @author AndroIT
+ * 
+ */
+public class Splash extends Activity {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		// Quitar barra de arriba.
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		// Aplicar layout
+		setContentView(R.layout.splash);
+
+		new Handler().postDelayed(new Runnable() {
+			public void run() {
+				// Despues de 5 segundos inicia la actividad principal de la
+				// aplicacion
+				startActivity(new Intent(Splash.this, DashboardActivity.class));
+				/* Destruye esta */
+				finish();
+			};
+		}, 4000);
+	}
+
+}
